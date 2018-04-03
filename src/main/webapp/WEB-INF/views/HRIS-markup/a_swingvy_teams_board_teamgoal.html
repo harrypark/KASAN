@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>INSPINIA | Teams board</title>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <!-- Toastr style -->
+    <link href="css/plugins/toastr/toastr.min.css" rel="stylesheet">
+
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+    <nav class="navbar-default navbar-static-side" role="navigation">
+        <div class="sidebar-collapse">
+            <ul class="nav metismenu" id="side-menu">
+              <li class="nav-header">
+                <div class="ibox-content" style="height: 100px;"></div>
+              </li>
+                <li class="nav-header">
+                  <div class="dropdown profile-element"> <span>
+                          <img alt="image" class="img-circle" src="img/profile_small.jpg" />
+                           </span>
+                      <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                          <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold">Planet Swingvy</strong>
+                          </span> <span class="text-muted text-xs block">Pioneer<b class="caret"></b></span> </span> </a>
+                      <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                          <li><a href="_swingvy_profile.html">Profile</a></li>
+                          <li><a href="contacts.html">Contacts</a></li>
+                      </ul>
+                  </div>
+                    <div class="logo-element">
+                        IN+
+                    </div>
+                </li>
+
+
+                <!-- swingvy menu -->
+                <li>
+                    <a href="_swingvy_employer_home.html"><i class="fa fa-diamond"></i> <span class="nav-label">Home</span></a>
+                </li>
+                <li>
+                    <a href="_swingvy_newspaper.html"><i class="fa fa-diamond"></i> <span class="nav-label">Newspaper</span></a>
+                </li>
+                <li class="active">
+                    <a href="mailbox.html"><i class="fa fa-envelope"></i> <span class="nav-label">My Info</span><span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level collapse">
+                        <li><a href="_swingvy_profile.html">Profile</a></li>
+                        <li><a href="_swingvy_table_foo_table.html">Time-off</a></li>
+                        <li><a href="_swingvy_calendar.html">Calendar</a></li>
+                        <li><a href="_swingvy_projects.html">Goal & Performance</a></li>
+                        <li><a href="_swingvy_file_manager.html">Document</a></li>
+                        <li><a href="_swingvy_metrics.html">Report</a></li>
+                        <li><a href="_swingvy_table_data_tables_assets.html">Assets</a></li>
+                        <li><a href="_swingvy_table_data_tables_jobs.html">Job</a></li>
+                        <li class="active"><a href="#.html">Team Goal</a></li>
+                        <li><a href="_swingvy_form_basic.html">Onboarding</a></li>
+                        <li><a href="_swingvy_form_wizard.html">Offboarding</a></li>
+                        <li><a href="_swingvy_table_data_tables_team_assets.html">Team Assets</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-edit"></i> <span class="nav-label">Team</span><span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level collapse">
+                        <li><a href="_swingvy_projects_team.html">Team Project</a></li>
+                        <li><a href="_swingvy_issue_tracker.html">Issue Tracker</a></li>
+                        <li><a href="_swingvy_file_manager_teammaterial.html">Team Material</a></li>
+                        <li><a href="_swingvy_calendar_team.html">Calendar & Schedule</a></li>
+                        <li><a href="_swingvy_teams_board.html">Goal & Performance</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-desktop"></i> <span class="nav-label">Company</span><span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level collapse">
+                        <li><a href="_swingvy_widgets.html">Company Announcement</a></li>
+                        <li><a href="_swingvy_tree_view.html">Org Chart</a></li>
+                        <li><a href="_swingvy_clients.html">Employee</a></li>
+                        <li><a href="_swingvy_file_manager_document.html">Document</a></li>
+                        <li><a href="_swingvy_carousel.html">Letter</a></li>
+                    </ul>
+                </li>
+            </ul>
+
+        </div>
+    </nav>
+
+        <div id="page-wrapper" class="gray-bg">
+        <div class="row border-bottom">
+        <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="navbar-header">
+            <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+            <form role="search" class="navbar-form-custom" action="search_results.html">
+                <div class="form-group">
+                    <input type="text" placeholder="Search for something..." class="form-control" name="top-search" id="top-search">
+                </div>
+            </form>
+        </div>
+            <ul class="nav navbar-top-links navbar-right">
+                <li class="dropdown">
+                    <ul class="dropdown-menu dropdown-messages">
+                        <li>
+                            <div class="dropdown-messages-box">
+                                <a href="profile.html" class="pull-left">
+                                    <img alt="image" class="img-circle" src="img/a7.jpg">
+                                </a>
+                                <div class="media-body">
+                                    <small class="pull-right">46h ago</small>
+                                    <strong>Mike Loreipsum</strong> started following <strong>Monica Smith</strong>. <br>
+                                    <small class="text-muted">3 days ago at 7:58 pm - 10.06.2014</small>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <div class="dropdown-messages-box">
+                                <a href="profile.html" class="pull-left">
+                                    <img alt="image" class="img-circle" src="img/a4.jpg">
+                                </a>
+                                <div class="media-body ">
+                                    <small class="pull-right text-navy">5h ago</small>
+                                    <strong>Chris Johnatan Overtunk</strong> started following <strong>Monica Smith</strong>. <br>
+                                    <small class="text-muted">Yesterday 1:21 pm - 11.06.2014</small>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <div class="dropdown-messages-box">
+                                <a href="profile.html" class="pull-left">
+                                    <img alt="image" class="img-circle" src="img/profile.jpg">
+                                </a>
+                                <div class="media-body ">
+                                    <small class="pull-right">23h ago</small>
+                                    <strong>Monica Smith</strong> love <strong>Kim Smith</strong>. <br>
+                                    <small class="text-muted">2 days ago at 2:30 am - 11.06.2014</small>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <div class="text-center link-block">
+                                <a href="mailbox.html">
+                                    <i class="fa fa-envelope"></i> <strong>Read All Messages</strong>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+                        <i class="fa fa-bell"></i>  <span class="label label-primary">8</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-alerts">
+                        <li>
+                            <a href="mailbox.html">
+                                <div>
+                                    <i class="fa fa-envelope fa-fw"></i> You have 16 messages
+                                    <span class="pull-right text-muted small">4 minutes ago</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="profile.html">
+                                <div>
+                                    <i class="fa fa-twitter fa-fw"></i> 3 New Followers
+                                    <span class="pull-right text-muted small">12 minutes ago</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="grid_options.html">
+                                <div>
+                                    <i class="fa fa-upload fa-fw"></i> Server Rebooted
+                                    <span class="pull-right text-muted small">4 minutes ago</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <div class="text-center link-block">
+                                <a href="notifications.html">
+                                    <strong>See All Alerts</strong>
+                                    <i class="fa fa-angle-right"></i>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+
+
+                <li>
+                    <a href="login.html">
+                        <i class="fa fa-sign-out"></i> Log out
+                    </a>
+                </li>
+            </ul>
+
+        </nav>
+        </div>
+            <div class="row wrapper border-bottom white-bg page-heading">
+                <div class="col-lg-10">
+                    <h2>Teams Goal</h2>
+                </div>
+                <div class="col-lg-2">
+
+                </div>
+            </div>
+
+        <div class="wrapper wrapper-content animated fadeInRight">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="ibox">
+                        <div class="ibox-title">
+                            <span class="label label-primary pull-right">NEW</span>
+                            <h5>IT-01 - Design Team</h5>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="team-members">
+                                <a href="#"><img alt="member" class="img-circle" src="img/a1.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a2.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a3.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a5.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a6.jpg"></a>
+                            </div>
+                            <h4>Info about Design Team</h4>
+                            <p>
+                                It is a long established fact that a reader will be distracted by the readable content
+                                of a page when looking at its layout. The point of using Lorem Ipsum is that it has.
+                            </p>
+                            <div>
+                                <span>Status of current project:</span>
+                                <div class="stat-percent">48%</div>
+                                <div class="progress progress-mini">
+                                    <div style="width: 48%;" class="progress-bar"></div>
+                                </div>
+                            </div>
+                            <div class="row  m-t-sm">
+                                <div class="col-sm-4">
+                                    <div class="font-bold">PROJECTS</div>
+                                    12
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="font-bold">RANKING</div>
+                                    4th
+                                </div>
+                                <div class="col-sm-4 text-right">
+                                    <div class="font-bold">BUDGET</div>
+                                    $200,913 <i class="fa fa-level-up text-navy"></i>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="ibox">
+                        <div class="ibox-title">
+                            <h5>IT-04 - Marketing Team</h5>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="team-members">
+                                <a href="#"><img alt="member" class="img-circle" src="img/a4.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a5.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a6.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a8.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a7.jpg"></a>
+                            </div>
+                            <h4>Info about Design Team</h4>
+                            <p>
+                                It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker.
+                            </p>
+                            <div>
+                                <span>Status of current project:</span>
+                                <div class="stat-percent">32%</div>
+                                <div class="progress progress-mini">
+                                    <div style="width: 32%;" class="progress-bar"></div>
+                                </div>
+                            </div>
+                            <div class="row  m-t-sm">
+                                <div class="col-sm-4">
+                                    <div class="font-bold">PROJECTS</div>
+                                    24
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="font-bold">RANKING</div>
+                                    3th
+                                </div>
+                                <div class="col-sm-4 text-right">
+                                    <div class="font-bold">BUDGET</div>
+                                    $190,325 <i class="fa fa-level-up text-navy"></i>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="ibox">
+                        <div class="ibox-title">
+                            <h5>IT-07 - Finance Team</h5>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="team-members">
+                                <a href="#"><img alt="member" class="img-circle" src="img/a4.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a8.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a7.jpg"></a>
+                            </div>
+                            <h4>Info about Design Team</h4>
+                            <p>
+                                Uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
+                            </p>
+                            <div>
+                                <span>Status of current project:</span>
+                                <div class="stat-percent">73%</div>
+                                <div class="progress progress-mini">
+                                    <div style="width: 73%;" class="progress-bar"></div>
+                                </div>
+                            </div>
+                            <div class="row  m-t-sm">
+                                <div class="col-sm-4">
+                                    <div class="font-bold">PROJECTS</div>
+                                    11
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="font-bold">RANKING</div>
+                                    6th
+                                </div>
+                                <div class="col-sm-4 text-right">
+                                    <div class="font-bold">BUDGET</div>
+                                    $560,105 <i class="fa fa-level-up text-navy"></i>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="ibox">
+                        <div class="ibox-title">
+                            <h5>IT-02 - Developers Team</h5>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="team-members">
+                                <a href="#"><img alt="member" class="img-circle" src="img/a8.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a4.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a1.jpg"></a>
+                            </div>
+                            <h4>Info about Design Team</h4>
+                            <p>
+                                Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.
+                            </p>
+                            <div>
+                                <span>Status of current project:</span>
+                                <div class="stat-percent">61%</div>
+                                <div class="progress progress-mini">
+                                    <div style="width: 61%;" class="progress-bar"></div>
+                                </div>
+                            </div>
+                            <div class="row  m-t-sm">
+                                <div class="col-sm-4">
+                                    <div class="font-bold">PROJECTS</div>
+                                    43
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="font-bold">RANKING</div>
+                                    1th
+                                </div>
+                                <div class="col-sm-4 text-right">
+                                    <div class="font-bold">BUDGET</div>
+                                    $705,913 <i class="fa fa-level-up text-navy"></i>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="ibox">
+                        <div class="ibox-title">
+                            <span class="label label-warning pull-right">DEADLINE</span>
+                            <h5>IT-05 - Administration Team</h5>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="team-members">
+                                <a href="#"><img alt="member" class="img-circle" src="img/a1.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a2.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a6.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a3.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a4.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a7.jpg"></a>
+                            </div>
+                            <h4>Info about Design Team</h4>
+                            <p>
+                                Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin.
+                            </p>
+                            <div>
+                                <span>Status of current project:</span>
+                                <div class="stat-percent">14%</div>
+                                <div class="progress progress-mini">
+                                    <div style="width: 14%;" class="progress-bar"></div>
+                                </div>
+                            </div>
+                            <div class="row  m-t-sm">
+                                <div class="col-sm-4">
+                                    <div class="font-bold">PROJECTS</div>
+                                    8
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="font-bold">RANKING</div>
+                                    7th
+                                </div>
+                                <div class="col-sm-4 text-right">
+                                    <div class="font-bold">BUDGET</div>
+                                    $40,200 <i class="fa fa-level-up text-navy"></i>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="ibox">
+                        <div class="ibox-title">
+                            <h5>IT-08 - Lorem ipsum Team</h5>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="team-members">
+                                <a href="#"><img alt="member" class="img-circle" src="img/a1.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a8.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a3.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a7.jpg"></a>
+                            </div>
+                            <h4>Info about Design Team</h4>
+                            <p>
+                                Many desktop publishing packages and web page editors now use Lorem Ipsum as their. ometimes by accident, sometimes on purpose (injected humour and the like).
+                            </p>
+                            <div>
+                                <span>Status of current project:</span>
+                                <div class="stat-percent">25%</div>
+                                <div class="progress progress-mini">
+                                    <div style="width: 25%;" class="progress-bar"></div>
+                                </div>
+                            </div>
+                            <div class="row  m-t-sm">
+                                <div class="col-sm-4">
+                                    <div class="font-bold">PROJECTS</div>
+                                    25
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="font-bold">RANKING</div>
+                                    4th
+                                </div>
+                                <div class="col-sm-4 text-right">
+                                    <div class="font-bold">BUDGET</div>
+                                    $140,105 <i class="fa fa-level-up text-navy"></i>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="ibox">
+                        <div class="ibox-title">
+
+                            <h5>IT-02 - Graphic Team</h5>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="team-members">
+                                <a href="#"><img alt="member" class="img-circle" src="img/a3.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a4.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a7.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a2.jpg"></a>
+                            </div>
+                            <h4>Info about Design Team</h4>
+                            <p>
+                                Very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.
+                            </p>
+                            <div>
+                                <span>Status of current project:</span>
+                                <div class="stat-percent">82%</div>
+                                <div class="progress progress-mini">
+                                    <div style="width: 82%;" class="progress-bar"></div>
+                                </div>
+                            </div>
+                            <div class="row  m-t-sm">
+                                <div class="col-sm-4">
+                                    <div class="font-bold">PROJECTS</div>
+                                    68
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="font-bold">RANKING</div>
+                                    2th
+                                </div>
+                                <div class="col-sm-4 text-right">
+                                    <div class="font-bold">BUDGET</div>
+                                    $701,400 <i class="fa fa-level-up text-navy"></i>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="ibox">
+                        <div class="ibox-title">
+                            <h5>IT-06 - Standard  Team</h5>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="team-members">
+                                <a href="#"><img alt="member" class="img-circle" src="img/a1.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a2.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a4.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a7.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a8.jpg"></a>
+                            </div>
+                            <h4>Info about Design Team</h4>
+                            <p>
+                                Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.
+                            </p>
+                            <div>
+                                <span>Status of current project:</span>
+                                <div class="stat-percent">26%</div>
+                                <div class="progress progress-mini">
+                                    <div style="width: 26%;" class="progress-bar"></div>
+                                </div>
+                            </div>
+                            <div class="row  m-t-sm">
+                                <div class="col-sm-4">
+                                    <div class="font-bold">PROJECTS</div>
+                                    16
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="font-bold">RANKING</div>
+                                    8th
+                                </div>
+                                <div class="col-sm-4 text-right">
+                                    <div class="font-bold">BUDGET</div>
+                                    $160,100 <i class="fa fa-level-up text-navy"></i>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="ibox">
+                        <div class="ibox-title">
+                            <h5>IT-09 - Modern Team</h5>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="team-members">
+                                <a href="#"><img alt="member" class="img-circle" src="img/a2.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a3.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a8.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a6.jpg"></a>
+                                <a href="#"><img alt="member" class="img-circle" src="img/a7.jpg"></a>
+                            </div>
+                            <h4>Info about Design Team</h4>
+                            <p>
+                                Words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in.
+                            </p>
+                            <div>
+                                <span>Status of current project:</span>
+                                <div class="stat-percent">18%</div>
+                                <div class="progress progress-mini">
+                                    <div style="width: 18%;" class="progress-bar"></div>
+                                </div>
+                            </div>
+                            <div class="row  m-t-sm">
+                                <div class="col-sm-4">
+                                    <div class="font-bold">PROJECTS</div>
+                                    53
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="font-bold">RANKING</div>
+                                    9th
+                                </div>
+                                <div class="col-sm-4 text-right">
+                                    <div class="font-bold">BUDGET</div>
+                                    $60,140 <i class="fa fa-level-up text-navy"></i>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="footer">
+            <div class="pull-right">
+                10GB of <strong>250GB</strong> Free.
+            </div>
+            <div>
+                <strong>Copyright</strong> Example Company &copy; 2014-2015
+            </div>
+        </div>
+
+        </div>
+        </div>
+
+
+
+    <!-- Mainly scripts -->
+    <script src="js/jquery-2.1.1.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="js/inspinia.js"></script>
+    <script src="js/plugins/pace/pace.min.js"></script>
+
+</body>
+
+</html>

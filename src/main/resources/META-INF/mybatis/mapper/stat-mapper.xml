@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kspat.web.mapper.StatMapper">
+	<delete id="deleteDayilStat" parameterType="string">
+		delete from ks_daily_stat
+		where st_dt=#{value}
+	</delete>
+
+	<select id="getDailyStatList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.DailyStat">
+		SELECT ds.id
+			   ,u.caps_name
+			   ,(select name from code_data where group_key='DEPT' and code=u.dept_cd and use_yn='Y') as dept_name
+		      ,st_dt
+		      ,week_name
+		      ,holiday_yn
+		      ,convert(varchar(5),go_tm,114) as go_tm
+			  ,convert(varchar(5),out_tm,114) as out_tm
+			  ,convert(varchar(5),late_tm,114) as late_tm
+			  ,convert(varchar(5),exp_out_tm,114) as exp_out_tm
+			  ,cal_work_tm_min
+		      ,work_tm_min
+		      ,st_leave
+		      ,st_hl_leave
+		      ,st_offcial
+		      ,st_short_late
+		      ,st_long_late
+		      ,st_fail_work_tm
+		      ,st_absence
+		      ,st_adjust
+		      ,memo
+		      ,data_error_yn
+		      ,(select caps_name from ks_user where id=ds.mdfy_id) as mdfy_id
+			  ,ds.mdfy_dt
+		  FROM ks_daily_stat ds, ks_user u
+		where ds.id=u.id and st_dm= #{searchDM}
+		<if test="searchUser != 'all'">
+		and ds.id=#{searchUser}
+		</if>
+		<if test="searchDept != 'all'">
+		and u.dept_cd=#{searchDept}
+		</if>
+	</select>
+
+	<insert id="insertDailyStat" parameterType="com.kspat.web.domain.DailyStat">
+		INSERT INTO ks_daily_stat
+           (id
+           ,st_dt
+           ,st_dm
+           ,st_year
+           ,week_name
+           ,holiday_yn
+           ,go_tm
+           ,out_tm
+           ,late_tm
+           ,exp_out_tm
+           ,cal_work_tm_min
+           ,work_tm_min
+           ,st_leave
+           ,st_hl_leave
+           ,st_offcial
+           ,st_short_late
+           ,st_long_late
+           ,st_fail_work_tm
+           ,st_absence
+           ,memo
+           ,st_adjust
+           ,data_error_yn
+           ,crtd_id
+           ,crtd_dt
+           ,mdfy_id
+           ,mdfy_dt)
+     VALUES
+           (#{id}
+           ,#{stDt}
+           ,SUBSTRING(#{stDt},1,7)
+           ,year(#{stDt})
+           ,#{weekName}
+           ,#{holidayYn}
+           ,convert(datetime,#{goTm})
+           ,convert(datetime,#{outTm})
+           ,convert(datetime,#{lateTm})
+           ,convert(datetime,#{expOutTm})
+           ,#{calWorkTmMin}
+           ,#{workTmMin}
+           ,#{stLeave}
+           ,#{stHlLeave}
+           ,#{stOffcial}
+           ,#{stShortLate}
+           ,#{stLongLate}
+           ,#{stFailWorkTm}
+           ,#{stAbsence}
+           ,#{memo}
+           ,#{stAdjust}
+           ,#{dataErrorYn}
+           ,#{mdfyId}
+           ,getdate()
+           ,#{mdfyId}
+           ,getdate()
+	   )
+	</insert>
+
+	<select id="getUserStatDetail" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.DailyStat">
+		SELECT ds.id
+			   ,u.caps_name
+			   ,(select name from code_data where group_key='DEPT' and code=u.dept_cd and use_yn='Y') as dept_name
+		      ,st_dt
+		      ,week_name
+		      ,holiday_yn
+		      ,convert(varchar(5),go_tm,114) as go_tm
+			  ,convert(varchar(5),out_tm,114) as out_tm
+			  ,convert(varchar(5),late_tm,114) as late_tm
+			  ,convert(varchar(5),exp_out_tm,114) as exp_out_tm
+			  ,cal_work_tm_min
+		      ,work_tm_min
+		      ,st_leave
+		      ,st_hl_leave
+		      ,st_offcial
+		      ,st_short_late
+		      ,st_long_late
+		      ,st_fail_work_tm
+		      ,st_absence
+		      ,st_adjust
+		      ,memo
+		      ,data_error_yn
+		      ,(select caps_name from ks_user where id=ds.crtd_id) as crtd_id
+			  ,ds.crtd_dt
+		  FROM ks_daily_stat ds, ks_user u
+		where ds.id=u.id and st_dt =#{searchDt}
+			and ds.id=#{searchUser}
+
+	</select>
+
+	<update id="updateAdjust" parameterType="com.kspat.web.domain.DailyStat">
+		update ks_daily_stat
+		set st_adjust=#{stAdjust}, memo=#{memo},mdfy_id=#{mdfyId}, mdfy_dt=getdate()
+		where id=#{id} and st_dt=#{stDt}
+
+	</update>
+
+	<select id="getUserAnnualUsedInfo" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.Score">
+		select isnull(availCount,0) as availCount
+		       ,isnull(usedLeave,0) as usedLeave
+		       ,isnull(usedHlLeave,0) as usedHlLeave
+		       ,(isnull(usedLeave,0)+isnull(usedHlLeave,0)) as usedCount
+		       ,isnull(currReplace,0) as currReplace
+		from (
+		select
+		(select avail_count from ks_annual where id=#{id} and year=#{searchYear}) as availCount,
+		(select count(le_dt) from (
+			select le_dt from ks_leave where crtd_id=#{id} and offcial='N' and year=#{searchYear} group by le_dt
+			) a) as usedLeave,
+		(select count(hl_dt)*0.5 from (
+			select hl_dt from ks_half_leave where crtd_id=#{id} and offcial='N' and year=#{searchYear} group by hl_dt
+			) b) as usedHlLeave,
+		(select month_replace_count - (select count(distinct repl_dt) from ks_replace where crtd_id=#{id} and convert(varchar(7), repl_dt, 120) =convert(varchar(7), getdate(), 120))
+				from ks_daily_rule
+				where getdate() between apply_start_dt and apply_end_dt) as currReplace
+		) score
+	</select>
+
+	<select id="getUserAnnualSubInfo" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.Score">
+
+		select isnull(subShort,0) as subShort
+				,isnull(subLong,0) as subLong
+				,isnull(subFailTm,0) as subFailTm
+				,isnull(subAbsence,0) as subAbsence
+				,isnull(FLOOR((1/convert(float, short_late_count)*subShort)+(1/convert(float, long_late_count)*subLong)),0) as sublate
+		from
+
+		(
+		select sum(st_short_late) as subShort
+		       ,sum(st_long_late) as subLong
+			   ,sum(st_fail_work_tm) as subFailTm
+			   ,sum(st_absence) as subAbsence
+		from ks_daily_stat where id=#{id} and st_year=#{searchYear} and st_adjust='N' ) a,
+		(
+		select * from ks_yearly_rule where apply_year=#{searchYear}
+		) b
+	</select>
+
+	<select id="getUserScore" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.Score">
+		select id, caps_name, dept_cd, dept_name,availCount,usedLeave,usedHlLeave
+           , (isnull(usedLeave,0) + isnull(usedHlLeave,0)) as usedCount
+		   ,currReplace,subShort,subLong,subFailTm,subAbsence
+		   ,subLate,hire_dt,start_dt,end_dt
+	       ,(subLate+subFailTm+subAbsence) as subCount
+		   ,(availCount-(isnull(usedLeave,0) + isnull(usedHlLeave,0))-(subLate+subFailTm+subAbsence)) as currCount
+
+	from (
+		select u.id, u.auth_cd,u.state_cd,u.caps_id,u.caps_name,u.hire_dt
+		        ,a.avail_count as availCount
+				,a.start_dt,a.end_dt
+		       ,u.dept_cd
+			   ,(select name from code_data where group_key='DEPT' and code=u.dept_cd and use_yn='Y') as dept_name
+			  ,ISNULL((select count(*) from ks_leave where crtd_id=u.id and offcial='N' and le_dt between a.start_dt and a.end_dt group by crtd_id),0) as usedLeave
+			  ,ISNULL((select count(distinct hl_dt)*0.5from ks_half_leave where crtd_id=u.id and offcial='N' and hl_dt between a.start_dt and a.end_dt group by crtd_id),0) as usedHlLeave
+			  ,kdr.month_replace_count-ISNULL(d.currReplace,0) as currReplace
+			  ,ds.subShort
+			  ,ds.subLong
+			  ,ds.subFailTm
+			  ,ds.subAbsence
+			  ,ds.short_late_count
+			  ,ds.long_late_count
+			  ,isnull(FLOOR((1/convert(float, ds.short_late_count)*ds.subShort)+(1/convert(float, ds.long_late_count)*ds.subLong)),0) as subLate
+		from ks_user u left outer join ks_auto_annual a on u.id=a.id
+		left outer join
+					(select kr.crtd_id,count(distinct repl_dt) as currReplace from ks_replace kr
+					where  convert(varchar(7), repl_dt, 120) =convert(varchar(7), getdate(), 120)
+					group by kr.crtd_id) d on u.id=d.crtd_id
+		left outer join
+		(
+		select kds.id
+				,sum(kds.st_short_late) as subShort
+				,sum(kds.st_long_late) as subLong
+				,sum(kds.st_fail_work_tm) as subFailTm
+				,sum(kds.st_absence) as subAbsence
+				,min(kyr.short_late_count) as short_late_count
+				,min(kyr.long_late_count) as long_late_count
+		from ks_daily_stat kds
+		left outer join ks_auto_annual a on kds.id=a.id
+		, ks_yearly_rule kyr
+		where kds.st_dt between a.start_dt and a.end_dt and  kds.st_adjust='N'
+		and kyr.apply_year=YEAR(GETDATE())
+		and kds.st_year=kyr.apply_year
+		group by kds.id
+		) ds on u.id=ds.id
+		,ks_daily_rule kdr
+		where u.auth_cd <![CDATA[<>]]> '003' and u.state_cd = '001'
+			and u.id=#{id}
+			and CONVERT(CHAR(10), getdate(), 121) between a.start_dt and a.end_dt
+
+		) k
+	</select>
+
+	<select id="getScoreList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.Score">
+	select id, caps_name, dept_cd, dept_name,availCount,usedLeave,usedHlLeave
+           , (isnull(usedLeave,0) + isnull(usedHlLeave,0)) as usedCount
+		   ,currReplace,subShort,subLong,subFailTm,subAbsence
+		   ,subLate,hire_dt,start_dt,end_dt
+	       ,(subLate+subFailTm+subAbsence) as subCount
+		   ,(availCount-(isnull(usedLeave,0) + isnull(usedHlLeave,0))-(subLate+subFailTm+subAbsence)) as currCount
+
+	from (
+		select u.id, u.auth_cd,u.state_cd,u.caps_id,u.caps_name,u.hire_dt
+		        ,a.avail_count as availCount
+				,a.start_dt,a.end_dt
+		       ,u.dept_cd
+			   ,(select name from code_data where group_key='DEPT' and code=u.dept_cd and use_yn='Y') as dept_name
+			  ,ISNULL((select count(*) from ks_leave where crtd_id=u.id and offcial='N' and le_dt between a.start_dt and a.end_dt group by crtd_id),0) as usedLeave
+			  ,ISNULL((select count(distinct hl_dt)*0.5from ks_half_leave where crtd_id=u.id and offcial='N' and hl_dt between a.start_dt and a.end_dt group by crtd_id),0) as usedHlLeave
+			  ,kdr.month_replace_count-ISNULL(d.currReplace,0) as currReplace
+			  ,ds.subShort
+			  ,ds.subLong
+			  ,ds.subFailTm
+			  ,ds.subAbsence
+			  ,ds.short_late_count
+			  ,ds.long_late_count
+			  ,isnull(FLOOR((1/convert(float, ds.short_late_count)*ds.subShort)+(1/convert(float, ds.long_late_count)*ds.subLong)),0) as subLate
+		from ks_user u left outer join ks_auto_annual a on u.id=a.id
+		left outer join
+					(select kr.crtd_id,count(distinct repl_dt) as currReplace from ks_replace kr
+					where  convert(varchar(7), repl_dt, 120) =convert(varchar(7), getdate(), 120)
+					group by kr.crtd_id) d on u.id=d.crtd_id
+		left outer join
+		(
+		select kds.id
+				,sum(kds.st_short_late) as subShort
+				,sum(kds.st_long_late) as subLong
+				,sum(kds.st_fail_work_tm) as subFailTm
+				,sum(kds.st_absence) as subAbsence
+				,min(kyr.short_late_count) as short_late_count
+				,min(kyr.long_late_count) as long_late_count
+		from ks_daily_stat kds
+		left outer join ks_auto_annual a on kds.id=a.id
+		, ks_yearly_rule kyr
+		where kds.st_dt between a.start_dt and a.end_dt and  kds.st_adjust='N'
+		and kyr.apply_year=YEAR(GETDATE())
+		and kds.st_year=kyr.apply_year
+		group by kds.id
+		) ds on u.id=ds.id
+		,ks_daily_rule kdr
+		where u.auth_cd <![CDATA[<>]]> '003' and u.state_cd = '001'
+		and CONVERT(CHAR(10), getdate(), 121) between a.start_dt and a.end_dt
+		<if test="searchUser != 'all'">
+			and u.id=#{searchUser}
+			</if>
+		<if test="searchDept != null">
+			<if test="searchDept != 'all'">
+			and u.dept_cd=#{searchDept}
+			</if>
+		</if>
+		) k
+	</select>
+
+	<select id="getLatePointList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.LatePoint">
+	select u.id
+	       ,u.caps_name
+	       ,u.dash_state
+		   ,(select name from code_data where group_key='DEPT' and code=u.dept_cd and use_yn='Y') as dept_name
+	       ,isnull(klp.year,#{searchYear}) as year
+		   ,klp.short_late
+		   ,klp.long_late
+		   ,klp.org_late_point
+		   ,klp.mail_to
+		   ,klp.mail_count
+		   ,convert(varchar(16),klp.last_mail_send_dt,120) as last_mail_send_dt
+		   ,klp.crtd_dt
+		   ,klp.mdfy_dt
+	from ks_user u left outer join
+	(select * from ks_late_point where year=#{searchYear}) klp on u.id=klp.id
+	where u.auth_cd <![CDATA[<>]]> '003' and u.state_cd='001'
+	<if test="searchUser != 'all'">
+		and u.id=#{searchUser}
+		</if>
+	<if test="searchDept != null">
+		<if test="searchDept != 'all'">
+		and u.dept_cd=#{searchDept}
+		</if>
+	</if>
+	</select>
+
+	<select id="getLateStatPointList" resultType="com.kspat.web.domain.LateStatPoint">
+		select
+			ku.id
+			,#{value} as year
+			,isnull(wp.short_late_sum,0) as short_late_sum
+			,isnull(wp.long_late_sum,0) as long_late_sum
+			,isnull(wp.org_late_point,0) as org_late_point
+			,isnull(FLOOR(wp.org_late_point),0) as late_point
+			,isnull(klp.short_late,0) as klp_short_late
+			,isnull(klp.long_late,0) as klp_long_late
+			,isnull(klp.org_late_point,0) as klp_org_late_point
+			,klp.late_point as klp_late_point
+			,isnull(klp.mail_count,0) as klp_mail_count
+			,convert(varchar(16),klp.last_mail_send_dt,120) as klp_last_mail_send_dt
+			from ks_user ku left outer join
+			(
+			select kds.id
+				   ,kds.short_late_sum
+				   ,kds.long_late_sum
+				   ,kyr.short_late_weight
+				   ,kyr.long_late_weight
+				   ,(kds.short_late_sum*kyr.short_late_weight + kds.long_late_sum*kyr.long_late_weight) as org_late_point
+			from
+			(
+			select id
+					,sum(st_short_late) as short_late_sum
+					,sum(st_long_late) as long_late_sum
+			from ks_daily_stat
+			where st_year=#{value} and st_adjust='N'
+			group by id) kds
+			,  ks_yearly_rule kyr
+			where kyr.apply_year=#{value}
+			) wp on ku.id=wp.id
+			left outer join
+			(select *
+			from ks_late_point where year=#{value}
+			) klp on ku.id=klp.id
+			where ku.auth_cd <![CDATA[<>]]>'003' and ku.state_cd='001'
+	</select>
+
+	<insert id="insertLatePoint" parameterType="com.kspat.web.domain.LatePoint">
+		INSERT INTO ks_late_point
+	           (id,year,short_late,long_late,org_late_point,late_point,mail_count,crtd_dt,mdfy_dt)
+	     VALUES
+	           (#{id},#{year},#{shortLate},#{longLate},#{orgLatePoint},#{latePoint},0,getdate(),getdate())
+	</insert>
+
+	<update id="updateLatePointWithMailSendDt" parameterType="com.kspat.web.domain.LatePoint">
+		UPDATE ks_late_point
+		SET short_late=#{shortLate},long_late=#{longLate},org_late_point=#{orgLatePoint},late_point=#{latePoint},last_mail_send_dt=getdate(),mail_count=#{latePoint},mdfy_dt=getdate()
+		WHERE id=#{id} and year=#{year}
+	</update>
+
+	<update id="updateLatePoint" parameterType="com.kspat.web.domain.LatePoint">
+		UPDATE ks_late_point
+		SET short_late=#{shortLate},long_late=#{longLate},org_late_point=#{orgLatePoint},late_point=#{latePoint},mail_count=#{latePoint},mdfy_dt=getdate()
+		WHERE id=#{id} and year=#{year}
+	</update>
+
+
+
+</mapper>

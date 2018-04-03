@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kspat.web.mapper.CalendarMapper">
+
+	<select id="getHolidayList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.Calendar">
+		select cal_year
+				,cal_month
+				,cal_day
+				,cal_date1
+				,cal_date2
+				,cal_date3
+				,cal_week_name
+				,cal_week_part
+				,cal_weekend_yn
+				,cal_holiday_yn
+				,cal_holiday_name
+				,data_error
+				,(select caps_name from ks_user where id=ca.mdfy_id) as mdfy_id
+				,mdfy_dt
+
+		from ks_calendar ca where cal_year=left(#{searchDM},4) and cal_month=right(#{searchDM},2)
+	</select>
+
+	<select id="getHolidayDetail" parameterType="com.kspat.web.domain.Calendar" resultType="com.kspat.web.domain.Calendar">
+		select cal_year
+				,cal_month
+				,cal_day
+				,cal_date1
+				,cal_date2
+				,cal_date3
+				,cal_week_name
+				,cal_week_part
+				,cal_weekend_yn
+				,cal_holiday_yn
+				,cal_holiday_name
+				,data_error
+				,memo
+				,(select caps_name from ks_user where id=ca.mdfy_id) as mdfy_id
+			,mdfy_dt
+		from ks_calendar ca where cal_year=left(#{calDate1},4) and cal_month=substring(#{calDate1},6,2) and cal_day=right(#{calDate1},2)
+	</select>
+
+	<update id="updateHoliday" parameterType="com.kspat.web.domain.Calendar">
+		update ks_calendar
+		set cal_Holiday_Yn=#{calHolidayYn},cal_Holiday_Name=#{calHolidayName},
+		    <if test="dataError != null">
+		    data_Error=#{dataError},
+		    </if>
+		    memo=#{memo}, mdfy_id=#{mdfyId},mdfy_dt=getdate()
+		where cal_year=left(#{calDate1},4) and cal_month=substring(#{calDate1},6,2) and cal_day=right(#{calDate1},2)
+	</update>
+
+	<select id="getDayInfo" parameterType="string" resultType="com.kspat.web.domain.DayInfo">
+		select *,
+			(case when CAL_WEEKEND_YN = 'Y' then 'Y' else
+			case when CAL_HOLIDAY_YN = 'Y' then 'Y' else 'N' end
+			end) as is_holiday
+		from ks_calendar where CAL_DATE1=#{value}
+	</select>
+
+	<update id="updateDataError" parameterType="com.kspat.web.domain.Calendar">
+		update ks_calendar
+		set data_Error=#{dataError},mdfy_id=#{mdfyId},mdfy_dt=getdate()
+		where cal_date1=#{calDate1}
+	</update>
+
+	<select id="checkCalendarDataError" parameterType="com.kspat.web.domain.SearchParam" resultType="string">
+		select data_error
+		from ks_calendar
+		where cal_date1=#{searchDt}
+
+	</select>
+
+</mapper>

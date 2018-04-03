@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true">
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %level [%thread] %logger{10} [%file:%line] %msg%n</pattern>
+		</encoder>
+	</appender>
+
+<!-- 	<appender name="EVENT_FILE" -->
+<!-- 		class="ch.qos.logback.core.rolling.RollingFileAppender"> -->
+<!-- 		<prudent>true</prudent> -->
+<!-- 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy"> -->
+<!-- 			<fileNamePattern>C:/tmp/app_base/dbmadm/sams/alarm/alarm_%d{yyyyMMdd}.log</fileNamePattern> -->
+<!-- 			<maxHistory>3</maxHistory> -->
+<!-- 		</rollingPolicy> -->
+<!-- 		<encoder> -->
+<!-- 			<pattern>%msg%n</pattern> -->
+<!-- 		</encoder> -->
+<!-- 	</appender> -->
+
+	<logger name="java.sql.Connection" level="WARN" />
+	<logger name="java.sql.Statement" level="INFO" />
+	<logger name="java.sql.PreparedStatement" level="INFO" />
+	<logger name="java.sql.ResultSet" level="INFO" />
+
+<!-- 	<logger name="io.canaria.web.mapper.common.BulletinMapper" level="WARN" /> -->
+<!-- 	<logger name="io.canaria.web.mapper.dashboard.DashboardMapper" level="WARN" /> -->
+
+	<!-- <logger name="org.springframework.security" level="DEBUG" /> -->
+
+	<!-- <logger name="app" level="TRACE"/> <logger name="code" level="TRACE"/>
+		<logger name="log" level="TRACE"/> <logger name="member" level="TRACE"/>
+		<logger name="payment" level="TRACE"/> <logger name="product" level="TRACE"/>
+		<logger name="subscription" level="TRACE"/> <logger name="country" level="TRACE"/>
+		<logger name="distribution" level="TRACE"/> <logger name="performance" level="TRACE"/>
+		<logger name="compontents" level="TRACE"/> <logger name="today" level="TRACE"/> -->
+	<logger name="test" level="TRACE" />
+	<!-- Application Loggers -->
+<!-- 	<logger name="com.dbm.nagios" level="info" /> -->
+
+	<!-- 3rdparty Loggers -->
+	<logger name="org.springframework.core" level="info" />
+
+	<logger name="org.springframework.beans" level="debug" />
+
+	<logger name="org.springframework.context" level="debug" />
+	<logger name="org.springframework.web" level="info" />
+
+
+	<!-- Application Loggers -->
+	<logger name="com.kspat" level="DEBUG" />
+	<logger name="com.apache" level="INFO" />
+<!-- 	<logger name="io.canaria.web.service.api.NotificationServiceImpl" level="INFO" > -->
+<!-- 		<appender-ref ref="EVENT_FILE" /> -->
+<!-- 	</logger> -->
+
+	<root level="WARN">
+		<appender-ref ref="STDOUT" />
+	</root>
+</configuration>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kspat.web.mapper.AutoAnnualMapper">
+
+	<select id="getUserHeirDtList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.AutoAnnual">
+		select id, caps_id, caps_name,hire_dt ,kaar.apply_dt,
+				(case
+				when hire_dt <![CDATA[<]]> kaar.apply_dt then 'before'
+				else 'after'
+				end) applyDtType
+		from ks_user ku, ks_annual_apply_rule kaar
+		where hire_dt is not null and auth_cd <![CDATA[<>]]>'003' and state_cd in ('001','002')
+		and kaar.seq = (select max(seq) from ks_annual_apply_rule)
+		<if test="searchId != null and searchId != ''">
+		and ku.id=#{searchId}
+		</if>
+	</select>
+
+	<select id="getTypeAAUsedAnnual" parameterType="com.kspat.web.domain.AutoAnnual" resultType="double">
+
+	select
+	(select count(distinct le_dt) from ks_leave where offcial='N' and crtd_id=#{id} and le_dt BETWEEN #{startDt} and #{endDt})
+	+(select count(distinct hl_dt)*0.5 from ks_half_leave where offcial='N' and  crtd_id=#{id} and hl_dt BETWEEN #{startDt} and #{endDt})
+
+	</select>
+
+	<delete id="deleteNowAnnual" parameterType="com.kspat.web.domain.AutoAnnual">
+		delete from ks_auto_annual
+		where id=#{id} and getdate() BETWEEN start_dt and end_dt
+
+	</delete>
+
+	<insert id="upsertAutoAnnual" parameterType="com.kspat.web.domain.AutoAnnual">
+		IF EXISTS(select * from ks_auto_annual where id=#{id} and year=#{year} and type=#{type})
+		   update ks_auto_annual set auto_annual=#{autoAnnual},avail_count=#{availCount},appply_dt_type=#{applyDtType},start_dt=#{startDt},end_dt=#{endDt},mdfy_id=#{mdfyId},mdfy_dt=getdate()  where id=#{id} and year=#{year} and type=#{type}
+		ELSE
+		   INSERT INTO ks_auto_annual(id,year,type,auto_annual,avail_count,appply_dt_type,start_dt,end_dt,crtd_id,crtd_dt,mdfy_id,mdfy_dt)
+ 		   VALUES (#{id} ,#{year},#{type},#{autoAnnual},#{availCount},#{applyDtType},#{startDt},#{endDt},#{crtdId},getdate(),#{mdfyId},getdate())
+	</insert>
+
+	<select id="getAutoAnnualList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.AutoAnnual">
+	select ku.id
+			,ku.caps_id
+			,ku.caps_name
+			,ku.dept_cd
+			,(select name from code_data where group_key='DEPT' and code=ku.dept_cd and use_yn='Y') as dept_name
+			,ku.state_cd
+			,(select name from code_data where group_key='USER_STATE' and code=ku.state_cd) as state_name
+			,ku.hire_dt
+			,ka.year as year
+			,ka.type as type
+			,ka.com_annual
+			,ISNULL(ka.auto_annual,0) as autoAnnual
+			,ISNULL(ka.avail_count,0) as availCount
+			,ka.start_dt
+			,ka.end_dt
+			,ka.mdfy_dt
+	from ks_user ku left outer join
+	(select aa.*,isnull(ac.com_annual,0) as com_annual
+	from ks_auto_annual aa
+	left outer join ks_annual_compen ac on aa.id=ac.id and aa.start_dt=ac.start_dt and aa.end_dt=ac.end_dt
+	where 1=1
+	<if test='searchOption == "curr"' >
+	and CONVERT(CHAR(10), getdate(), 23) between aa.start_dt and aa.end_dt
+	</if>
+	) ka
+	on ku.id=ka.id
+	where ku.hire_dt is not null and ku.auth_cd <![CDATA[<>]]>'003' and ku.state_cd in ('001','002')
+	<if test="searchText != ''">
+			and ku.caps_name LIKE '%' + #{searchText} + '%'
+	</if>
+	<if test="searchDept != 'all'">
+		and ku.dept_cd=#{searchDept}
+	</if>
+	<if test="searchState != 'all'">
+		and ku.state_cd=#{searchState}
+	</if>
+
+	</select>
+
+	<select id="getUserAutoAnnualDetail" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.AutoAnnual">
+		select ku.id
+				,ku.caps_id
+				,ku.caps_name
+				,ku.dept_cd
+				,(select name from code_data where group_key='DEPT' and code=ku.dept_cd and use_yn='Y') as dept_name
+				,ku.state_cd
+				,(select name from code_data where group_key='USER_STATE' and code=ku.state_cd) as state_name
+				,ku.hire_dt
+				,ka.year as year
+				,ka.type as type
+				,ka.com_annual
+				,ISNULL(ka.auto_annual,0) as autoAnnual
+				,ISNULL(ka.avail_count,0) as availCount
+				,ka.start_dt
+				,ka.end_dt
+				,ka.mdfy_dt
+		from ks_user ku left outer join
+		(select aa.*,isnull(ac.com_annual,0) as com_annual
+		from ks_auto_annual aa
+		left outer join ks_annual_compen ac on aa.id=ac.id and aa.start_dt=ac.start_dt and aa.end_dt=ac.end_dt
+		where aa.id=#{searchId}
+		) ka
+		on ku.id=ka.id
+		where ku.id=#{searchId} and ka.start_dt=#{startDt} and ka.end_dt=#{endDt}
+
+	</select>
+
+
+
+
+	<select id="getUserComPenAnnual" resultType="com.kspat.web.domain.ComPenAnnual">
+	SELECT *
+	FROM ks_annual_compen
+	WHERE id=#{id} and start_dt = #{startDt} and end_dt=#{endDt}
+	</select>
+
+
+	<insert id="upsertComPenAnnual" parameterType="com.kspat.web.domain.ComPenAnnual">
+		IF EXISTS(select * from ks_annual_compen where id=#{id} and start_dt=#{startDt} and end_dt=#{endDt})
+		   update ks_annual_compen set com_annual=#{comAnnual},memo=#{memo},mdfy_id=#{mdfyId},mdfy_dt=getdate()  where id=#{id} and start_dt=#{startDt} and end_dt=#{endDt}
+		ELSE
+		   INSERT INTO ks_annual_compen(id,start_dt,end_dt,com_annual,memo,crtd_id,crtd_dt,mdfy_id,mdfy_dt)
+ 		   VALUES (#{id} ,#{startDt},#{endDt},#{comAnnual},#{memo},#{crtdId},getdate(),#{mdfyId},getdate())
+	</insert>
+
+</mapper>

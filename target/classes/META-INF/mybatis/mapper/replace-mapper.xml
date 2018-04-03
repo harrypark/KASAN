@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kspat.web.mapper.ReplaceMapper">
+
+	<select id="getReplaceAvailableTime" resultType="com.kspat.web.domain.Replace">
+		select go_start_tm as repl_start_tm	,go_end_tm as repl_end_tm
+		from ks_daily_rule
+		where getdate() between apply_start_dt and apply_end_dt
+	</select>
+
+	<select id="checkAvailableReplaceCount" parameterType="com.kspat.web.domain.SearchParam" resultType="int">
+	select month_replace_count - (select count(distinct repl_dt) from ks_replace where crtd_id=#{crtdId} and convert(varchar(7), repl_dt, 120) =convert(varchar(7), getdate(), 120))
+		from ks_daily_rule
+		where getdate() between apply_start_dt and apply_end_dt;
+	</select>
+
+	<select id="checkAvailableReplaceInfo" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.AvailableReplaceInfo">
+	select month_replace_count - (select count(distinct repl_dt) from ks_replace where crtd_id=#{crtdId} and convert(varchar(7), repl_dt, 120) =convert(varchar(7), getdate(), 120)) as currCount,
+		   max_replace_hr*60 - ISNULL((select sum(term) from ks_replace where crtd_id=#{crtdId} and repl_dt =#{searchDt} group by repl_dt),0) as todayMin,
+		   isnull((select 	convert(varchar(5),max(repl_end_tm),114) from ks_replace where crtd_id=#{crtdId} and repl_dt=#{searchDt}),go_start_tm) as availStartTm
+	from ks_daily_rule
+	where #{searchDt} between apply_start_dt and apply_end_dt
+	</select>
+
+	<select id="getReplDtRegDtCount" parameterType="com.kspat.web.domain.SearchParam" resultType="int">
+	select count(*) from ks_replace where crtd_id=#{crtdId} and repl_dt =#{searchDt}
+	</select>
+
+	<insert id="insertReplace" parameterType="com.kspat.web.domain.Replace" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO ks_replace (repl_dt,repl_start_tm,repl_end_tm ,term,supple_dt ,memo,in_lunch,crtd_id ,crtd_dt,mdfy_id ,mdfy_dt)
+     	VALUES (convert(date,#{replDt}) ,convert(datetime,#{replDt}+' '+#{replStartTm}),convert(datetime,#{replDt}+' '+#{replEndTm}) ,#{term},convert(date,#{suppleDt}),#{memo},#{inLunch},#{crtdId},getdate(),#{mdfyId},getdate())
+	</insert>
+
+	<select id="getReplaceDetailById" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.Replace">
+		select id
+			,convert(varchar(10),repl_dt,120) as repl_dt
+			,convert(varchar(5),repl_start_tm,114) as repl_start_tm
+			,convert(varchar(5),repl_end_tm,114) as repl_end_tm
+			,term
+			,convert(varchar(10),supple_dt,120) as supple_dt
+			,memo
+			,in_lunch
+			,(select caps_name from ks_user where id=re.crtd_id) as crtd_id
+			,crtd_dt
+			,(select caps_name from ks_user where id=re.mdfy_id) as mdfy_id
+			,mdfy_dt
+		from ks_replace re
+		where id=#{searchId}
+	</select>
+
+	<select id="getReplaceList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.Replace">
+		select id
+			,convert(varchar(10),repl_dt,120) as repl_dt
+			,convert(varchar(5),repl_start_tm,114) as repl_start_tm
+			,convert(varchar(5),repl_end_tm,114) as repl_end_tm
+			,term
+			,convert(varchar(10),supple_dt,120) as supple_dt
+			,memo
+			,in_lunch
+			,(select caps_name from ks_user where id=re.crtd_id) as crtd_id
+			,crtd_dt
+			,(select caps_name from ks_user where id=re.mdfy_id) as mdfy_id
+			,mdfy_dt
+		from ks_replace re
+		where crtd_id=#{crtdId}
+		and (repl_dt  between #{fromDate} and #{toDate} or supple_dt  between #{fromDate} and #{toDate})
+	</select>
+
+
+
+	<delete id="deleteReplace" parameterType="com.kspat.web.domain.Replace">
+		delete from ks_replace
+		where id=#{id}
+	</delete>
+
+	<select id="checkReplDuplicate" parameterType="com.kspat.web.domain.Replace" resultType="int">
+		select count(*) from ks_replace where repl_dt=#{replDt} and crtd_id=#{crtdId}
+	</select>
+
+	<!--
+	<select id="checkHlSuppDuplicate" parameterType="com.kspat.web.domain.Replace" resultType="int">
+		select count(*) from ks_half_leave where hl_dt=#{suppleDt} and crtd_id=#{crtdId}
+	</select>
+	 -->
+	<update id="updateReplace" parameterType="com.kspat.web.domain.Replace">
+		update ks_replace
+		set supple_dt = convert(date,#{suppleDt}),memo=#{memo}, mdfy_id=#{mdfyId},mdfy_dt=getdate()
+		where id=#{id}
+	</update>
+
+
+
+
+
+
+
+
+</mapper>

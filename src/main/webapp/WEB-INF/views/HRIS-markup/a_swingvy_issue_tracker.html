@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>INSPINIA | Issue list</title>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <!-- Toastr style -->
+    <link href="css/plugins/toastr/toastr.min.css" rel="stylesheet">
+
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
+
+
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+    <nav class="navbar-default navbar-static-side" role="navigation">
+        <div class="sidebar-collapse">
+            <ul class="nav metismenu" id="side-menu">
+              <li class="nav-header">
+                <div class="ibox-content" style="height: 100px;"></div>
+              </li>
+                <li class="nav-header">
+                  <div class="dropdown profile-element"> <span>
+                          <img alt="image" class="img-circle" src="img/profile_small.jpg" />
+                           </span>
+                      <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                          <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold">Planet Swingvy</strong>
+                          </span> <span class="text-muted text-xs block">Pioneer<b class="caret"></b></span> </span> </a>
+                      <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                          <li><a href="_swingvy_profile.html">Profile</a></li>
+                          <li><a href="contacts.html">Contacts</a></li>
+                      </ul>
+                  </div>
+                    <div class="logo-element">
+                        IN+
+                    </div>
+                </li>
+                <!-- swingvy menu -->
+                <li>
+                    <a href="_swingvy_employer_home.html"><i class="fa fa-diamond"></i> <span class="nav-label">Home</span></a>
+                </li>
+                <li>
+                    <a href="_swingvy_newspaper.html"><i class="fa fa-diamond"></i> <span class="nav-label">Newspaper</span></a>
+                </li>
+                <li>
+                    <a href="mailbox.html"><i class="fa fa-envelope"></i> <span class="nav-label">My Info</span><span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level collapse">
+                        <li><a href="_swingvy_profile.html">Profile</a></li>
+                        <li><a href="_swingvy_table_foo_table.html">Time-off</a></li>
+                        <li><a href="_swingvy_calendar.html">Calendar</a></li>
+                        <li><a href="_swingvy_projects.html">Goal & Performance</a></li>
+                        <li><a href="_swingvy_file_manager.html">Document</a></li>
+                        <li><a href="_swingvy_metrics.html">Report</a></li>
+                        <li><a href="_swingvy_table_data_tables_assets.html">Assets</a></li>
+                        <li><a href="_swingvy_table_data_tables_jobs.html">Job</a></li>
+                        <li><a href="_swingvy_teams_board_teamgoal.html">Team Goal</a></li>
+                        <li><a href="_swingvy_form_basic.html">Onboarding</a></li>
+                        <li><a href="_swingvy_form_wizard.html">Offboarding</a></li>
+                        <li><a href="_swingvy_table_data_tables_team_assets.html">Team Assets</a></li>
+                    </ul>
+                </li>
+                <li class="active">
+                    <a href="#"><i class="fa fa-edit"></i> <span class="nav-label">Team</span><span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level collapse">
+                        <li><a href="_swingvy_projects_team.html">Team Project</a></li>
+                        <li class="active"><a href="#">Issue Tracker</a></li>
+                        <li><a href="_swingvy_file_manager_teammaterial.html">Team Material</a></li>
+                        <li><a href="_swingvy_calendar_team.html">Calendar & Schedule</a></li>
+                        <li><a href="_swingvy_teams_board.html">Goal & Performance</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-desktop"></i> <span class="nav-label">Company</span><span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level collapse">
+                        <li><a href="_swingvy_widgets.html">Company Announcement</a></li>
+                        <li><a href="_swingvy_tree_view.html">Org Chart</a></li>
+                        <li><a href="_swingvy_clients.html">Employee</a></li>
+                        <li><a href="_swingvy_file_manager_document.html">Document</a></li>
+                        <li><a href="_swingvy_carousel.html">Letter</a></li>
+                    </ul>
+                </li>
+            </ul>
+
+        </div>
+    </nav>
+
+        <div id="page-wrapper" class="gray-bg">
+        <div class="row border-bottom">
+        <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="navbar-header">
+            <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+            <form role="search" class="navbar-form-custom" action="search_results.html">
+                <div class="form-group">
+                    <input type="text" placeholder="Search for something..." class="form-control" name="top-search" id="top-search">
+                </div>
+            </form>
+        </div>
+            <ul class="nav navbar-top-links navbar-right">
+                <li class="dropdown">
+                    <ul class="dropdown-menu dropdown-messages">
+                        <li>
+                            <div class="dropdown-messages-box">
+                                <a href="profile.html" class="pull-left">
+                                    <img alt="image" class="img-circle" src="img/a7.jpg">
+                                </a>
+                                <div class="media-body">
+                                    <small class="pull-right">46h ago</small>
+                                    <strong>Mike Loreipsum</strong> started following <strong>Monica Smith</strong>. <br>
+                                    <small class="text-muted">3 days ago at 7:58 pm - 10.06.2014</small>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <div class="dropdown-messages-box">
+                                <a href="profile.html" class="pull-left">
+                                    <img alt="image" class="img-circle" src="img/a4.jpg">
+                                </a>
+                                <div class="media-body ">
+                                    <small class="pull-right text-navy">5h ago</small>
+                                    <strong>Chris Johnatan Overtunk</strong> started following <strong>Monica Smith</strong>. <br>
+                                    <small class="text-muted">Yesterday 1:21 pm - 11.06.2014</small>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <div class="dropdown-messages-box">
+                                <a href="profile.html" class="pull-left">
+                                    <img alt="image" class="img-circle" src="img/profile.jpg">
+                                </a>
+                                <div class="media-body ">
+                                    <small class="pull-right">23h ago</small>
+                                    <strong>Monica Smith</strong> love <strong>Kim Smith</strong>. <br>
+                                    <small class="text-muted">2 days ago at 2:30 am - 11.06.2014</small>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <div class="text-center link-block">
+                                <a href="mailbox.html">
+                                    <i class="fa fa-envelope"></i> <strong>Read All Messages</strong>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+                        <i class="fa fa-bell"></i>  <span class="label label-primary">8</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-alerts">
+                        <li>
+                            <a href="mailbox.html">
+                                <div>
+                                    <i class="fa fa-envelope fa-fw"></i> You have 16 messages
+                                    <span class="pull-right text-muted small">4 minutes ago</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="profile.html">
+                                <div>
+                                    <i class="fa fa-twitter fa-fw"></i> 3 New Followers
+                                    <span class="pull-right text-muted small">12 minutes ago</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="grid_options.html">
+                                <div>
+                                    <i class="fa fa-upload fa-fw"></i> Server Rebooted
+                                    <span class="pull-right text-muted small">4 minutes ago</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <div class="text-center link-block">
+                                <a href="notifications.html">
+                                    <strong>See All Alerts</strong>
+                                    <i class="fa fa-angle-right"></i>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+
+
+                <li>
+                    <a href="login.html">
+                        <i class="fa fa-sign-out"></i> Log out
+                    </a>
+                </li>
+            </ul>
+
+        </nav>
+        </div>
+            <div class="row wrapper border-bottom white-bg page-heading">
+                <div class="col-lg-10">
+                    <h2>Issue Tracker</h2>
+                </div>
+                <div class="col-lg-2">
+
+                </div>
+            </div>
+
+        <div class="wrapper wrapper-content  animated fadeInRight">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox">
+                        <div class="ibox-title">
+                            <h5>Issue list</h5>
+                            <div class="ibox-tools">
+                                <a href="" class="btn btn-primary btn-xs">Add new issue</a>
+                            </div>
+                        </div>
+                        <div class="ibox-content">
+
+                            <div class="m-b-lg">
+
+                                <div class="input-group">
+                                    <input type="text" placeholder="Search issue by name..." class=" form-control">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-white"> Search</button>
+                                    </span>
+                                </div>
+                                <div class="m-t-md">
+
+                                    <div class="pull-right">
+                                        <button type="button" class="btn btn-sm btn-white"> <i class="fa fa-comments"></i> </button>
+                                        <button type="button" class="btn btn-sm btn-white"> <i class="fa fa-user"></i> </button>
+                                        <button type="button" class="btn btn-sm btn-white"> <i class="fa fa-list"></i> </button>
+                                        <button type="button" class="btn btn-sm btn-white"> <i class="fa fa-pencil"></i> </button>
+                                        <button type="button" class="btn btn-sm btn-white"> <i class="fa fa-print"></i> </button>
+                                        <button type="button" class="btn btn-sm btn-white"> <i class="fa fa-cogs"></i> </button>
+                                    </div>
+
+                                    <strong>Found 61 issues.</strong>
+
+
+
+                                </div>
+
+                            </div>
+
+                            <div class="table-responsive">
+                            <table class="table table-hover issue-tracker">
+                                <tbody>
+                                <tr>
+                                    <td>
+                                        <span class="label label-primary">Added</span>
+                                    </td>
+                                    <td class="issue-info">
+                                        <a href="#">
+                                            ISSUE-23
+                                        </a>
+
+                                        <small>
+                                            This is issue with the coresponding note
+                                        </small>
+                                    </td>
+                                    <td>
+                                        Adrian Novak
+                                    </td>
+                                    <td>
+                                        12.02.2015 10:00 am
+                                    </td>
+                                    <td>
+                                        <span class="pie">0.52,1.041</span>
+                                        2d
+                                    </td>
+                                    <td class="text-right">
+                                        <button class="btn btn-white btn-xs"> Tag</button>
+                                        <button class="btn btn-white btn-xs"> Mag</button>
+                                        <button class="btn btn-white btn-xs"> Rag</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="label label-primary">Added</span>
+                                    </td>
+                                    <td class="issue-info">
+                                        <a href="#">
+                                            ISSUE-17
+                                        </a>
+
+                                        <small>
+                                            Desktop publishing packages and web page editors now use Lorem Ipsum as their default model text
+                                        </small>
+                                    </td>
+                                    <td>
+                                        Anna Smith
+                                    </td>
+                                    <td>
+                                        10.02.2015 05:32 am
+                                    </td>
+                                    <td>
+                                        <span class="pie">3,2</span>
+                                        2d
+                                    </td>
+                                    <td class="text-right">
+                                        <button class="btn btn-white btn-xs"> Tag</button>
+                                        <button class="btn btn-white btn-xs"> Rag</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="label label-primary">Added</span>
+                                    </td>
+                                    <td class="issue-info">
+                                        <a href="#">
+                                            ISSUE-12
+                                        </a>
+
+                                        <small>
+                                            It is a long established fact that a reader will be
+                                        </small>
+                                    </td>
+                                    <td>
+                                        Anthony Jackson
+                                    </td>
+                                    <td>
+                                        02.03.2015 06:02 am
+                                    </td>
+                                    <td>
+                                        <span class="pie">1,2</span>
+                                        1d
+                                    </td>
+                                    <td class="text-right">
+                                        <button class="btn btn-white btn-xs"> Tag</button>
+                                        <button class="btn btn-white btn-xs"> Mag</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="label label-primary">Added</span>
+                                    </td>
+                                    <td class="issue-info">
+                                        <a href="#">
+                                            ISSUE-11
+                                        </a>
+
+                                        <small>
+                                            There are many variations of passages of Lorem Ipsum available, but the majority have suffered
+                                        </small>
+                                    </td>
+                                    <td>
+                                        Monica Proven
+                                    </td>
+                                    <td>
+                                        01.10.2015 11:02 pm
+                                    </td>
+                                    <td>
+                                        <span class="pie">4,2</span>
+                                        3d
+                                    </td>
+                                    <td class="text-right">
+                                        <button class="btn btn-white btn-xs"> Tag</button>
+                                        <button class="btn btn-white btn-xs"> Rag</button>
+                                        <button class="btn btn-white btn-xs"> Dag</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="label label-warning">Fixed</span>
+                                    </td>
+                                    <td class="issue-info">
+                                        <a href="#">
+                                            ISSUE-07
+                                        </a>
+
+                                        <small>
+                                            Always free from repetition, injected humour, or non-characteristic words etc.
+                                        </small>
+                                    </td>
+                                    <td>
+                                        Alex Ferguson
+                                    </td>
+                                    <td>
+                                        28.11.2015 05:10 pm
+                                    </td>
+                                    <td>
+                                        <span class="pie">1,2</span>
+                                        2d
+                                    </td>
+                                    <td class="text-right">
+                                        <button class="btn btn-white btn-xs"> Tag</button>
+                                        <button class="btn btn-white btn-xs"> Dag</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="label label-warning">Fixed</span>
+                                    </td>
+                                    <td class="issue-info">
+                                        <a href="#">
+                                            ISSUE-07
+                                        </a>
+
+                                        <small>
+                                            Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit am
+                                        </small>
+                                    </td>
+                                    <td>
+                                        Mark Conor
+                                    </td>
+                                    <td>
+                                        18.09.2015 06:20 pm
+                                    </td>
+                                    <td>
+                                        <span class="pie">3,2</span>
+                                        3d
+                                    </td>
+                                    <td class="text-right">
+                                        <button class="btn btn-white btn-xs"> Tag</button>
+                                        <button class="btn btn-white btn-xs"> Mag</button>
+                                        <button class="btn btn-white btn-xs"> Dag</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="label label-warning">Fixed</span>
+                                    </td>
+                                    <td class="issue-info">
+                                        <a href="#">
+                                            ISSUE-06
+                                        </a>
+
+                                        <small>
+                                            Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit am
+                                        </small>
+                                    </td>
+                                    <td>
+                                        Carol Jackson
+                                    </td>
+                                    <td>
+                                        11.03.2015 07:30 pm
+                                    </td>
+                                    <td>
+                                        <span class="pie">3,2</span>
+                                        2d
+                                    </td>
+                                    <td class="text-right">
+                                        <button class="btn btn-white btn-xs"> Mag</button>
+                                        <button class="btn btn-white btn-xs"> Dag</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="label label-warning">Fixed</span>
+                                    </td>
+                                    <td class="issue-info">
+                                        <a href="#">
+                                            ISSUE-05
+                                        </a>
+
+                                        <small>
+                                            Content here, content here', making it look like readable English. Many desktop
+                                        </small>
+                                    </td>
+                                    <td>
+                                        Carol Jackson
+                                    </td>
+                                    <td>
+                                        05.04.2015 08:40 pm
+                                    </td>
+                                    <td>
+                                        <span class="pie">3,2</span>
+                                        2d
+                                    </td>
+                                    <td class="text-right">
+                                        <button class="btn btn-white btn-xs"> Mag</button>
+                                        <button class="btn btn-white btn-xs"> Dag</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="label label-warning">Fixed</span>
+                                    </td>
+                                    <td class="issue-info">
+                                        <a href="#">
+                                            ISSUE-04
+                                        </a>
+
+                                        <small>
+                                            Virginia, looked up one of the more obscure Latin words, consectetur
+                                        </small>
+                                    </td>
+                                    <td>
+                                        Monica Smith
+                                    </td>
+                                    <td>
+                                        10.06.2014 08:10 pm
+                                    </td>
+                                    <td>
+                                        <span class="pie">5,7</span>
+                                        4d
+                                    </td>
+                                    <td class="text-right">
+                                        <button class="btn btn-white btn-xs"> Mag</button>
+                                        <button class="btn btn-white btn-xs"> Cag</button>
+                                        <button class="btn btn-white btn-xs"> Dag</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="label label-warning">Fixed</span>
+                                    </td>
+                                    <td class="issue-info">
+                                        <a href="#">
+                                            ISSUE-03
+                                        </a>
+
+                                        <small>
+                                            Injected humour, or randomised words which don't l
+                                        </small>
+                                    </td>
+                                    <td>
+                                        Anna Johnson
+                                    </td>
+                                    <td>
+                                        13.05.2014 09:20 pm
+                                    </td>
+                                    <td>
+                                        <span class="pie">2,7</span>
+                                        3d
+                                    </td>
+                                    <td class="text-right">
+                                        <button class="btn btn-white btn-xs"> Cag</button>
+                                        <button class="btn btn-white btn-xs"> Dag</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="label label-danger">Bug</span>
+                                    </td>
+                                    <td class="issue-info">
+                                        <a href="#">
+                                            ISSUE-44
+                                        </a>
+
+                                        <small>
+                                            This is issue with the coresponding note
+                                        </small>
+                                    </td>
+                                    <td>
+                                        Adrian Novak
+                                    </td>
+                                    <td>
+                                        12.02.2015 10:00 am
+                                    </td>
+                                    <td>
+                                        <span class="pie">0.52,1.041</span>
+                                        2d
+                                    </td>
+                                    <td class="text-right">
+                                        <button class="btn btn-white btn-xs"> Tag</button>
+                                        <button class="btn btn-white btn-xs"> Mag</button>
+                                        <button class="btn btn-white btn-xs"> Rag</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="label label-danger">Bug</span>
+                                    </td>
+                                    <td class="issue-info">
+                                        <a href="#">
+                                            ISSUE-41
+                                        </a>
+
+                                        <small>
+                                            Desktop publishing packages and web page editors now use Lorem Ipsum as their default model text
+                                        </small>
+                                    </td>
+                                    <td>
+                                        Anna Smith
+                                    </td>
+                                    <td>
+                                        10.02.2015 05:32 am
+                                    </td>
+                                    <td>
+                                        <span class="pie">3,2</span>
+                                        2d
+                                    </td>
+                                    <td class="text-right">
+                                        <button class="btn btn-white btn-xs"> Tag</button>
+                                        <button class="btn btn-white btn-xs"> Rag</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="label label-danger">Bug</span>
+                                    </td>
+                                    <td class="issue-info">
+                                        <a href="#">
+                                            ISSUE-34
+                                        </a>
+
+                                        <small>
+                                            It is a long established fact that a reader will be
+                                        </small>
+                                    </td>
+                                    <td>
+                                        Anthony Jackson
+                                    </td>
+                                    <td>
+                                        02.03.2015 06:02 am
+                                    </td>
+                                    <td>
+                                        <span class="pie">1,2</span>
+                                        1d
+                                    </td>
+                                    <td class="text-right">
+                                        <button class="btn btn-white btn-xs"> Tag</button>
+                                        <button class="btn btn-white btn-xs"> Mag</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="label label-danger">Bug</span>
+                                    </td>
+                                    <td class="issue-info">
+                                        <a href="#">
+                                            ISSUE-46
+                                        </a>
+
+                                        <small>
+                                            There are many variations of passages of Lorem Ipsum available, but the majority have suffered
+                                        </small>
+                                    </td>
+                                    <td>
+                                        Monica Proven
+                                    </td>
+                                    <td>
+                                        01.10.2015 11:02 pm
+                                    </td>
+                                    <td>
+                                        <span class="pie">4,2</span>
+                                        3d
+                                    </td>
+                                    <td class="text-right">
+                                        <button class="btn btn-white btn-xs"> Tag</button>
+                                        <button class="btn btn-white btn-xs"> Rag</button>
+                                        <button class="btn btn-white btn-xs"> Dag</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="label label-danger">Bug</span>
+                                    </td>
+                                    <td class="issue-info">
+                                        <a href="#">
+                                            ISSUE-51
+                                        </a>
+
+                                        <small>
+                                            Always free from repetition, injected humour, or non-characteristic words etc.
+                                        </small>
+                                    </td>
+                                    <td>
+                                        Alex Ferguson
+                                    </td>
+                                    <td>
+                                        28.11.2015 05:10 pm
+                                    </td>
+                                    <td>
+                                        <span class="pie">1,2</span>
+                                        2d
+                                    </td>
+                                    <td class="text-right">
+                                        <button class="btn btn-white btn-xs"> Tag</button>
+                                        <button class="btn btn-white btn-xs"> Dag</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="label label-danger">Bug</span>
+                                    </td>
+                                    <td class="issue-info">
+                                        <a href="#">
+                                            ISSUE-52
+                                        </a>
+
+                                        <small>
+                                            Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit am
+                                        </small>
+                                    </td>
+                                    <td>
+                                        Mark Conor
+                                    </td>
+                                    <td>
+                                        18.09.2015 06:20 pm
+                                    </td>
+                                    <td>
+                                        <span class="pie">3,2</span>
+                                        3d
+                                    </td>
+                                    <td class="text-right">
+                                        <button class="btn btn-white btn-xs"> Tag</button>
+                                        <button class="btn btn-white btn-xs"> Mag</button>
+                                        <button class="btn btn-white btn-xs"> Dag</button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="footer">
+            <div class="pull-right">
+                10GB of <strong>250GB</strong> Free.
+            </div>
+            <div>
+                <strong>Copyright</strong> Example Company &copy; 2014-2015
+            </div>
+        </div>
+
+        </div>
+        </div>
+
+
+
+    <!-- Mainly scripts -->
+    <script src="js/jquery-2.1.1.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="js/inspinia.js"></script>
+    <script src="js/plugins/pace/pace.min.js"></script>
+
+    <!-- Peity -->
+    <script src="js/plugins/peity/jquery.peity.min.js"></script>
+
+    <!-- Peity demo data -->
+    <script src="js/demo/peity-demo.js"></script>
+</body>
+
+</html>

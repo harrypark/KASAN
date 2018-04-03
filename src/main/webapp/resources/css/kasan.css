@@ -1,0 +1,25 @@
+/*
+	dashboard
+*/
+.dept_box {margin-bottom: 5px;}
+.event-title {min-height: 40px;}
+
+.dashboard-header .panel-body {padding: 10px;}
+.dashboard-header .today-time span.label {margin-right: 10px;}
+
+/*
+	일통계
+*/
+.modal_statInfo .stext {
+	margin-bottom: 0;
+    padding-top: 7px;
+    text-align: left;
+}
+
+.modal_statInfo .hr-line-dashed {
+	margin: 5px; 0;
+}
+
+.modal_statInfo .st_input input {width:30px;}
+
+table.ks-dash-table tbody tr.tr-ks {cursor: pointer;}

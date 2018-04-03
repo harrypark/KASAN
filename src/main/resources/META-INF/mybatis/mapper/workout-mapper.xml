@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kspat.web.mapper.WorkoutMapper">
+
+	<insert id="insertWorkout" parameterType="com.kspat.web.domain.Workout" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO ks_workout(out_dt,week_name,start_tm,end_tm,diffm,here_go_yn,here_out_yn,destination,memo,crtd_id,crtd_dt,mdfy_id,mdfy_dt)
+     	VALUES(convert(date,#{outDt}),datename(dw,#{outDt}),convert(datetime,#{outDt}+' '+#{startTm}),convert(datetime,#{outDt}+' '+#{endTm})
+     		,DATEDIFF(minute, convert(datetime,#{outDt}+' '+#{startTm}), convert(datetime,#{outDt}+' '+#{endTm}))
+           ,case when #{hereGoYn} is null then 'N' else #{hereGoYn} end
+           ,case when #{hereOutYn} is null then 'N' else #{hereOutYn} end
+           ,#{destination},#{memo},#{crtdId},getdate(),#{mdfyId},getdate())
+	</insert>
+
+	<select id="getWorkoutDetailById" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.Workout">
+		select id
+			,convert(varchar(10),out_dt,120) as out_dt
+			,week_name
+			,convert(varchar(5),start_tm,114) as start_tm
+			,convert(varchar(5),end_tm,114) as end_tm
+			,diffm
+			,isnull(here_go_yn,'N') as here_go_yn
+			,isnull(here_out_yn,'N') as here_out_yn
+			,destination
+			,memo
+			,(select caps_name from ks_user where id=kw.crtd_id) as crtd_id
+			,crtd_dt
+			,(select caps_name from ks_user where id=kw.mdfy_id) as mdfy_id
+			,mdfy_dt
+		from ks_workout kw
+		where id=#{searchId}
+	</select>
+
+	<select id="getUserWorkoutList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.Workout">
+		select id
+			,convert(varchar(10),out_dt,120) as out_dt
+			,week_name
+			,convert(varchar(5),start_tm,114) as start_tm
+			,convert(varchar(5),end_tm,114) as end_tm
+			,diffm
+			,isnull(here_go_yn,'N') as here_go_yn
+			,isnull(here_out_yn,'N') as here_out_yn
+			,destination
+			,memo
+			,(select caps_name from ks_user where id=kw.crtd_id) as crtd_id
+			,crtd_dt
+			,(select caps_name from ks_user where id=kw.mdfy_id) as mdfy_id
+			,mdfy_dt
+		from ks_workout kw
+		where crtd_id=#{crtdId}
+		and out_dt  between #{fromDate} and #{toDate}
+	</select>
+
+	<update id="updateWorkout" parameterType="com.kspat.web.domain.Workout">
+        update ks_workout
+        set out_dt=convert(date,#{outDt})
+            ,week_name=datename(dw,#{outDt})
+            ,start_tm=convert(datetime,#{outDt}+' '+#{startTm})
+            ,end_tm=convert(datetime,#{outDt}+' '+#{endTm})
+            ,diffm=DATEDIFF(minute, convert(datetime,#{outDt}+' '+#{startTm}), convert(datetime,#{outDt}+' '+#{endTm}))
+            ,here_go_yn=case when #{hereGoYn} is null then 'N' else #{hereGoYn} end
+            ,here_out_yn=case when #{hereOutYn} is null then 'N' else #{hereOutYn} end
+            ,destination=#{destination}
+            ,memo=#{memo}
+            ,mdfy_id=#{mdfyId}
+            ,mdfy_dt=getdate()
+        where id=#{id}
+
+	</update>
+
+	<delete id="deleteWorkout" parameterType="com.kspat.web.domain.Workout">
+		delete from ks_workout
+		where id=#{id}
+	</delete>
+
+	<select id="getWorkoutAvailableTime" resultType="com.kspat.web.domain.Workout">
+		select go_start_tm as start_tm
+			,convert(varchar(5),dateadd(hour, 9, go_end_tm),8) as end_tm
+		from ks_daily_rule
+		where getdate() between apply_start_dt and apply_end_dt
+	</select>
+
+
+
+
+
+</mapper>

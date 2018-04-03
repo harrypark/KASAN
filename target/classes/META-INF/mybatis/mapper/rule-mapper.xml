@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kspat.web.mapper.RuleMapper">
+
+<!-- 	<insert id="insertBusinessTrip" parameterType="com.kspat.web.domain.BusinessTrip" useGeneratedKeys="true" keyProperty="id"> -->
+<!-- 		INSERT INTO ks_business_trip(start_dt,end_dt,destination,memo,crtd_id,crtd_dt,mdfy_id,mdfy_dt) -->
+<!--      	VALUES (convert(date,left(#{tripRange},10)),convert(date,right(#{tripRange},10)),#{destination},#{memo},#{crtdId},getdate(),#{mdfyId},getdate()) -->
+<!-- 	</insert> -->
+
+	<select id="getDailyRuleDetail" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.DailyRule">
+		select convert(varchar(10),apply_start_dt,120) as apply_start_dt
+			   ,convert(varchar(10),apply_end_dt,120) as apply_end_dt
+			   ,long_late_rule
+			   ,go_start_tm
+			   ,go_end_tm
+			   ,month_replace_count
+			   ,max_replace_hr
+			   ,(select caps_name from ks_user where id=kdr.crtd_id) as crtd_id
+				,crtd_dt
+				,(select caps_name from ks_user where id=kdr.mdfy_id) as mdfy_id
+				,mdfy_dt
+		from ks_daily_rule kdr
+		where apply_start_dt=#{fromDate} and apply_end_dt=#{toDate}
+	</select>
+
+	<select id="getDailyRuleList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.DailyRule">
+		select convert(varchar(10),apply_start_dt,120) as apply_start_dt
+			   ,convert(varchar(10),apply_end_dt,120) as apply_end_dt
+			   ,long_late_rule
+			   ,go_start_tm
+			   ,go_end_tm
+			   ,month_replace_count
+			   ,max_replace_hr
+			   ,(select caps_name from ks_user where id=kdr.crtd_id) as crtd_id
+				,crtd_dt
+				,(select caps_name from ks_user where id=kdr.mdfy_id) as mdfy_id
+				,mdfy_dt
+		from ks_daily_rule kdr
+	</select>
+
+	<update id="updateDailyRule" parameterType="com.kspat.web.domain.DailyRule">
+        update ks_daily_rule
+        set long_late_rule=#{longLateRule}
+ 			,go_start_tm=#{goStartTm}
+			,go_end_tm=#{goEndTm}
+			,month_replace_count=#{monthReplaceCount}
+			,max_replace_hr=#{maxReplaceHr}
+            ,mdfy_id=#{mdfyId}
+            ,mdfy_dt=getdate()
+        where apply_start_dt=#{applyStartDt} and apply_end_dt=#{applyEndDt}
+
+	</update>
+
+	<select id="isDuplicateCheckDailyRule" parameterType="com.kspat.web.domain.DailyRule" resultType="int">
+		select count(*) from ks_daily_rule where apply_start_dt=#{applyStartDt}
+	</select>
+
+	<update id="updateDailyRuleLastRecord" parameterType="com.kspat.web.domain.DailyRule">
+		update ks_daily_rule
+		set apply_end_dt=getdate(),mdfy_id=#{mdfyId},mdfy_dt=getdate()
+		where apply_end_dt='9999-12-31'
+
+	</update>
+
+	<insert id="insertDailyRule" parameterType="com.kspat.web.domain.DailyRule">
+		INSERT INTO ks_daily_rule
+           (apply_start_dt
+           ,apply_end_dt
+           ,long_late_rule
+           ,go_start_tm
+           ,go_end_tm
+           ,month_replace_count
+           ,max_replace_hr
+           ,crtd_id
+           ,crtd_dt
+           ,mdfy_id
+           ,mdfy_dt)
+     VALUES
+           (#{applyStartDt}
+           ,#{applyEndDt}
+           ,#{longLateRule}
+           ,#{goStartTm}
+           ,#{goEndTm}
+           ,#{monthReplaceCount}
+           ,#{maxReplaceHr}
+           ,#{crtdId}
+           ,getdate()
+           ,#{mdfyId}
+           ,getdate()
+           )
+	</insert>
+
+	<select id="getYearlyRuleList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.YearlyRule">
+		select apply_year
+			   ,short_late_count
+			   ,long_late_count
+			   ,short_late_weight
+			   ,long_late_weight
+			   ,(select caps_name from ks_user where id=kyr.crtd_id) as crtd_id
+				,crtd_dt
+				,(select caps_name from ks_user where id=kyr.mdfy_id) as mdfy_id
+				,mdfy_dt
+		from ks_yearly_rule kyr
+	</select>
+
+	<select id="getyearlyRuleDetail" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.YearlyRule">
+		select apply_year
+			   ,short_late_count
+			   ,long_late_count
+			   ,short_late_weight
+			   ,long_late_weight
+			   ,(select caps_name from ks_user where id=kyr.crtd_id) as crtd_id
+				,crtd_dt
+				,(select caps_name from ks_user where id=kyr.mdfy_id) as mdfy_id
+				,mdfy_dt
+		from ks_yearly_rule kyr
+		where apply_year=#{searchYear}
+	</select>
+
+	<update id="updateYearlyRule" parameterType="com.kspat.web.domain.YearlyRule">
+		update ks_yearly_rule
+		set short_late_count = #{shortLateCount}
+		    ,long_late_count = #{longLateCount}
+		    ,short_late_weight=#{shortLateWeight}
+			,long_late_weight=#{longLateWeight}
+			,mdfy_id=#{mdfyId},mdfy_dt=getdate()
+
+		where 1=1
+		<choose>
+			<when test='updateType.equals("1")'>
+			and apply_year <![CDATA[ >= ]]>    #{applyYear}
+			</when>
+			<otherwise>
+			and apply_year = #{applyYear}
+			</otherwise>
+		</choose>
+
+	</update>
+
+	<select id="getCurrentDailyRule" parameterType="string" resultType="com.kspat.web.domain.DailyRule" >
+	select long_late_rule,go_start_tm,go_end_tm, month_replace_count,max_replace_hr
+	from ks_daily_rule
+	where #{value} between apply_start_dt and apply_end_dt
+	</select>
+
+	<select id="getAnnualRule" resultType="string">
+	select rule_type from ks_annual_rule
+	</select>
+
+	<update id="updateAnnualRule" parameterType="string">
+	update ks_annual_rule
+	set rule_type=#{value},mdfy_dt=getdate()
+	</update>
+
+	<select id="getAnnualApplyDt" resultType="string">
+	select apply_dt from ks_annual_apply_rule where seq=(select max(seq) from ks_annual_apply_rule)
+	</select>
+
+	<insert id="insertAnnualApplyDt">
+	INSERT INTO ks_annual_apply_rule(apply_dt,mdfy_dt)
+	VALUES (#{applyDt},getdate())
+	</insert>
+
+
+
+
+
+
+</mapper>

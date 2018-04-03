@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kspat.web.mapper.ReservationMapper">
+
+	<select id="getReservationList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.Reservation">
+		SELECT id
+		      ,type
+		      ,code
+		      ,title
+		      ,description
+		      ,[start]
+		      ,[end]
+		      ,(select caps_name from ks_user where id=kr.crtd_id) as caps_name
+		      ,crtd_id
+		      ,crtd_dt
+		  FROM ks_reservation kr
+		  WHERE type=#{searchType} and code = #{searchCode}
+		  and start between #{fromDate} and #{toDate}
+	</select>
+
+	<select id="getSeletDayTimeLimit" parameterType="com.kspat.web.domain.Reservation" resultType="com.kspat.web.domain.Reservation">
+		SELECT top 1 id
+		      ,type
+		      ,code
+		      ,title
+		      ,description
+		      ,[start]
+		      ,[end]
+		      ,crtd_id
+		      ,crtd_dt
+		  FROM ks_reservation
+		  WHERE type=#{type} and code = #{code}
+		  and start between #{start} and CONVERT(VARCHAR(10),DATEADD(day,1,convert(datetime,#{start})),120)+' 00:00'
+		  order by start
+	</select>
+
+	<insert id="insertReservation" parameterType="com.kspat.web.domain.Reservation" useGeneratedKeys="true" keyProperty="id">
+
+	INSERT INTO ks_reservation
+           (type
+           ,code
+           ,title
+           ,description
+           ,[start]
+           ,[end]
+           ,crtd_id
+           ,crtd_dt)
+     VALUES
+           (#{type}
+           ,#{code}
+           ,#{title}
+           ,#{description}
+           ,convert(datetime,#{start})
+           ,convert(datetime,#{end})
+           ,#{crtdId}
+           ,getdate()
+		   )
+	</insert>
+
+	<select id="getReservationById" parameterType="int" resultType="com.kspat.web.domain.Reservation">
+		SELECT id
+		      ,type
+		      ,code
+		      ,title
+		      ,description
+		      ,[start]
+		      ,[end]
+		      ,(select caps_name from ks_user where id=kr.crtd_id) as caps_name
+		      ,crtd_id
+		      ,crtd_dt
+		  FROM ks_reservation kr
+		  WHERE id=#{id}
+	</select>
+
+	<update id="updateReservation" parameterType="com.kspat.web.domain.Reservation">
+		UPDATE ks_reservation
+		   SET [title] = #{title}
+		      ,[description] = #{description}
+		      ,[crtd_dt] = getdate()
+		 WHERE id=#{id}
+	</update>
+
+	<delete id="deleteReservation">
+		delete from ks_reservation where id=#{id}
+	</delete>
+
+
+
+
+
+</mapper>

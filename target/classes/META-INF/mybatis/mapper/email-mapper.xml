@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kspat.web.mapper.EmailMapper">
+
+
+
+	<update id="updateMailSendType" parameterType="string">
+		update ks_mail_send
+		set send_type=#{value},mdfy_dt=getdate()
+
+	</update>
+
+	<select id="getMailSendType" resultType="String">
+		select top 1 send_type from ks_mail_send
+	</select>
+
+	<select id="getLateMailDefault" resultType="String">
+		select top 1 late_default_addr from ks_mail_send
+	</select>
+
+	<update id="updateLateMailDefault" parameterType="string">
+		update ks_mail_send
+		set late_default_addr=#{value}
+	</update>
+
+	<select id="getMailContentList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.MailContent">
+	select * from ks_mail_content
+	</select>
+
+	<insert id="insertMailContent" parameterType="com.kspat.web.domain.MailContent" useGeneratedKeys="true" keyProperty="id">
+	INSERT INTO ks_mail_content (type,content,crtd_dt,mdfy_dt)
+		VALUES (#{type},#{content},getdate(),getdate())
+	</insert>
+
+	<select id="getMailContentDetail" parameterType="com.kspat.web.domain.MailContent" resultType="com.kspat.web.domain.MailContent">
+	select * from ks_mail_content where id=#{id}
+	</select>
+
+	<update id="updateMailContent" parameterType="com.kspat.web.domain.MailContent">
+	update ks_mail_content
+	set type=#{type},content=#{content},mdfy_dt=getdate()
+	where id=#{id}
+	</update>
+
+
+
+
+</mapper>

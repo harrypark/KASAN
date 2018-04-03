@@ -1,0 +1,62 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:p="http://www.springframework.org/schema/p"
+		xmlns:util="http://www.springframework.org/schema/util"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans
+							http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+							http://www.springframework.org/schema/util
+						http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+
+	<bean id="velocityEngine"
+	  class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+	  <property name="resourceLoaderPath" value="classpath:/META-INF/templates" />
+	 </bean>
+
+	 <bean id="templateBuilder" class="com.kspat.template.VelocityTemplateBuilder"
+	  p:velocityEngine-ref="velocityEngine" p:encoding="UTF-8" />
+
+
+
+	 <util:properties id="sendMailInfo">
+
+		<prop key="test">test.html</prop>
+		<prop key="woMailForm">woMailForm.html</prop>
+		<prop key="btMailForm">btMailForm.html</prop>
+		<prop key="leaveMailForm">leaveMailForm.html</prop>
+		<prop key="hlMailForm">hlMailForm.html</prop>
+		<prop key="replaceMailForm">replaceMailForm.html</prop>
+		<prop key="rowDataMailForm">rawDataMailForm.html</prop>
+		<prop key="latePointMailForm">latePointMailForm.html</prop>
+
+		<prop key="devMail">bbaga93@daum.net</prop><!-- 개발자 메일주소(테스트용) -->
+		<prop key="address">kasan@iipservice.com</prop>
+
+	</util:properties>
+
+	<util:properties id="file">
+		<prop key="baseDir">D:\my.kspat.com\file\</prop>
+	</util:properties>
+
+
+
+
+
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="smtp.gmail.com" />
+		<property name="port" value="587" />
+		<property name="username" value="kasan@iipservice.com" />
+		<property name="password" value="1234@1234" />
+<!-- 		<property name="username" value="parkhs93@gmail.com" /> -->
+<!-- 		<property name="password" value="sunedu21!@" /> -->
+
+		<property name="javaMailProperties">
+		   <props>
+	       	      <prop key="mail.smtp.auth">true</prop>
+	       	      <prop key="mail.smtp.starttls.enable">true</prop>
+	       	      <prop key="mail.debug">true</prop>
+	       	   </props>
+		</property>
+	</bean>
+
+</beans>

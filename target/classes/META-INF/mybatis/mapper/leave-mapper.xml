@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kspat.web.mapper.LeaveMapper">
+
+	<select id="getLeaveList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.Leave">
+		select id
+			,convert(varchar(10),le_dt,120) as le_dt
+			,term
+			,memo
+			,offcial
+			,(select caps_name from ks_user where id=kl.crtd_id) as crtd_id
+			,crtd_dt
+			,(select caps_name from ks_user where id=kl.mdfy_id) as mdfy_id
+			,mdfy_dt
+		from ks_leave kl
+		where crtd_id=#{crtdId}
+		and le_dt  between #{fromDate} and #{toDate}
+	</select>
+
+	<insert id="insertLeave" parameterType="com.kspat.web.domain.Leave" useGeneratedKeys="true" keyProperty="id">
+	INSERT INTO ks_leave (year,le_dt,term,memo,offcial,crtd_id,crtd_dt,mdfy_id,mdfy_dt)
+	VALUES (year(#{leDt}),#{leDt},#{term},#{memo},#{offcial},#{crtdId},getdate(),#{mdfyId},getdate())
+	</insert>
+
+
+	<select id="checkLeaveDayCount" parameterType="com.kspat.web.domain.Leave" resultType="int">
+		select count(*) from ks_calendar
+		where CAL_DATE1 between #{startDt} and #{endDt}
+		and CAL_WEEKEND_YN='N' and CAL_HOLIDAY_YN='N'
+	</select>
+
+	<select id="checkLeaveDay" parameterType="com.kspat.web.domain.Leave" resultType="com.kspat.web.domain.Calendar">
+		select * from ks_calendar
+		where CAL_DATE1 between #{startDt} and #{endDt}
+		and CAL_WEEKEND_YN='N' and CAL_HOLIDAY_YN='N'
+	</select>
+
+	<select id="getLeaveDetail" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.Leave">
+		select id
+			,year
+			,convert(varchar(10),le_dt,120) as le_dt
+			,term
+			,memo
+			,offcial
+			,(select caps_name from ks_user where id=kl.crtd_id) as crtd_id
+			,crtd_dt
+			,(select caps_name from ks_user where id=kl.mdfy_id) as mdfy_id
+			,mdfy_dt
+		from ks_leave kl
+		where id=#{searchId}
+	</select>
+
+	<delete id="deleteLeave" parameterType="com.kspat.web.domain.Leave">
+		delete from ks_leave
+		where id=#{id}
+	</delete>
+
+
+	<select id="getHalfLeaveList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.HalfLeave">
+		select id
+			,year
+			,convert(varchar(10),hl_dt,120) as hl_dt
+			,term
+			,memo
+			,offcial
+			,(select caps_name from ks_user where id=khl.crtd_id) as crtd_id
+			,crtd_dt
+			,(select caps_name from ks_user where id=khl.mdfy_id) as mdfy_id
+			,mdfy_dt
+		from ks_half_leave khl
+		where crtd_id=#{crtdId}
+		and hl_dt between #{fromDate} and #{toDate}
+	</select>
+
+
+	<insert id="insertHalfLeave" parameterType="com.kspat.web.domain.HalfLeave" useGeneratedKeys="true" keyProperty="id">
+	INSERT INTO ks_half_leave (year,hl_dt,term,memo,offcial,crtd_id,crtd_dt,mdfy_id,mdfy_dt)
+	VALUES (year(#{hlDt}),#{hlDt},#{term},#{memo},#{offcial},#{crtdId},getdate(),#{mdfyId},getdate())
+	</insert>
+
+
+	<select id="getHalfLeaveDetail" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.HalfLeave">
+		select id
+			,year
+			,convert(varchar(10),hl_dt,120) as hl_dt
+			,term
+			,memo
+			,offcial
+			,(select caps_name from ks_user where id=khl.crtd_id) as crtd_id
+			,crtd_dt
+			,(select caps_name from ks_user where id=khl.mdfy_id) as mdfy_id
+			,mdfy_dt
+		from ks_half_leave khl
+		where id=#{searchId}
+	</select>
+
+	<delete id="deleteHalfLeave" parameterType="com.kspat.web.domain.HalfLeave">
+		delete from ks_half_leave
+		where id=#{id}
+	</delete>
+	<!--
+	<select id="chackhlSuppDuplicate" parameterType="com.kspat.web.domain.HalfLeave" resultType="int">
+		select count(*) from ks_replace where supple_dt=#{hlDt} and crtd_id=#{crtdId}
+	</select>
+	 -->
+	<select id="getAnnualMinusUseYn" resultType="string">
+		select rule_type as annualMinusUseYn from ks_annual_rule
+	</select>
+
+
+
+
+</mapper>

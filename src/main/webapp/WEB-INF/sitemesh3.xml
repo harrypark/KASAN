@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<sitemesh>
+	 <content-processor>
+		<tag-rule-bundle class="org.sitemesh.content.tagrules.html.DivExtractingTagRuleBundle" />
+	</content-processor>
+	<mapping path="/*Ajax*" exclue="true" />
+	<mapping path="/login*" exclue="true" />
+<!-- 	<mapping path="/dashboard/*integratedDashboard" exclue="true" /> -->
+
+
+	<mapping path="/*" decorator="/WEB-INF/decorator/default_layout.jsp" />
+
+<!-- 	<mapping path="/dbtrend/*" decorator="/WEB-INF/decorator/dbtrend_layout.jsp" /> -->
+
+<!-- 	<mapping path="/report/*" decorator="/WEB-INF/decorator/etc_layout.jsp" /> -->
+
+<!-- 	<mapping path="/admin/*" decorator="/WEB-INF/decorator/admin_layout.jsp" /> -->
+<!-- 	<mapping path="/member/*" decorator="/WEB-INF/decorator/admin_layout.jsp" /> -->
+
+<!-- 	<mapping path="/chart/*" exclue="true" /> -->
+<!-- 	<mapping path="/event/market*" exclue="true" /> -->
+<!-- 	<mapping path="/login/*" exclue="true" /> -->
+<!-- 	<mapping path="/common/*" exclue="true" /> -->
+</sitemesh>

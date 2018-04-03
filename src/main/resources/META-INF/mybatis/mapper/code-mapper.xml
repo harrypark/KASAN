@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kspat.web.mapper.CodeMapper">
+
+	<insert id="insertCodeGroup" parameterType="com.kspat.web.domain.CodeGroup" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO code_group (name,group_key,use_yn,crtd_id,crtd_dt,mdfy_id,mdfy_dt)
+		VALUES (#{name},#{groupKey},'Y',#{crtdId},getdate(),#{mdfyId},getdate())
+	</insert>
+
+	<select id="groupKeyDuplicateCount" parameterType="com.kspat.web.domain.CodeGroup" resultType="int">
+		select count(*) from code_group where group_key=#{groupKey};
+	</select>
+
+	<select id="getCodeGroupDetail" parameterType="com.kspat.web.domain.CodeGroup" resultType="com.kspat.web.domain.CodeGroup">
+		select id,name,group_key,use_yn
+			,(select caps_name from ks_user where id=cg.crtd_id) as crtd_id
+			,crtd_dt
+			,(select caps_name from ks_user where id=cg.mdfy_id) as mdfy_id
+			,mdfy_dt
+		 from code_group cg where id=#{id} and use_yn='Y'
+	</select>
+
+	<select id="getCodeGroupDetailByGroupKey" parameterType="string" resultType="com.kspat.web.domain.CodeGroup">
+		select top 1 id,name,group_key,use_yn
+		from code_group where group_key=#{value} and use_yn='Y'
+	</select>
+
+	<select id="getCodeGroupList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.CodeGroup">
+		select id,name,group_key,use_yn
+			,(select caps_name from ks_user where id=cg.crtd_id) as crtd_id
+			,crtd_dt
+			,(select caps_name from ks_user where id=cg.mdfy_id) as mdfy_id
+			,mdfy_dt
+		from code_group cg where use_yn='Y'
+	</select>
+
+	<update id="updateCodeGroup" parameterType="com.kspat.web.domain.CodeGroup">
+		update code_group
+		set name=#{name},mdfy_id=#{mdfyId},mdfy_dt=getdate()
+		where id=#{id}
+	</update>
+
+	<select id="getCodeDataList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.CodeData">
+		select id,group_key,name,code,ord,use_yn
+			,(select caps_name from ks_user where id=cd.crtd_id) as crtd_id
+			,crtd_dt
+			,(select caps_name from ks_user where id=cd.mdfy_id) as mdfy_id
+			,mdfy_dt
+       		,(select name from code_group where group_key=cd.group_key ) as groupName
+       from code_data cd
+	</select>
+
+	<select id="getCode" parameterType="com.kspat.web.domain.CodeData" resultType="string">
+		select max(code) from code_data where group_key=#{groupKey}
+	</select>
+
+	<insert id="insertCodeData" parameterType="com.kspat.web.domain.CodeData" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO code_data (name,group_key,code,ord,use_yn,crtd_id,crtd_dt,mdfy_id,mdfy_dt)
+		VALUES (#{name},#{groupKey},#{code},#{ord},#{useYn},#{crtdId},getdate(),#{mdfyId},getdate())
+	</insert>
+
+	<select id="getCodeDataDetail" parameterType="com.kspat.web.domain.CodeData" resultType="com.kspat.web.domain.CodeData">
+		select id,group_key,name,code,ord,use_yn
+			,(select caps_name from ks_user where id=cd.crtd_id) as crtd_id
+			,crtd_dt
+			,(select caps_name from ks_user where id=cd.mdfy_id) as mdfy_id
+			,mdfy_dt
+       		,(select name from code_group where group_key=cd.group_key ) as groupName
+		from code_data cd where id=#{id}
+	</select>
+
+	<update id="updateCodeData" parameterType="com.kspat.web.domain.CodeData">
+		update code_data
+		set name=#{name},ord=#{ord},use_yn=#{useYn},mdfy_id=#{mdfyId},mdfy_dt=getdate()
+		where id=#{id}
+	</update>
+
+	<select id="getCommonCodeList" parameterType="string" resultType="com.kspat.web.domain.CodeData">
+		select *
+		from code_data cd where group_key=#{groupKey} and use_yn='Y'
+		order by ord
+	</select>
+
+	<select id="getManagerDeptList" parameterType="hashmap" resultType="com.kspat.web.domain.CodeData">
+		select *
+		from code_data cd
+		where group_key='DEPT' and use_yn='Y'
+		and code in  <foreach collection="depts" item="type" index="index"  open="(" close=")" separator=",">
+			            #{type}
+			        </foreach>
+		order by ord
+	</select>
+
+</mapper>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kspat.web.mapper.ManagementMapper">
+
+	<select id="getDeptDeptsList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.Dept">
+		select cd.code
+			,cd.name
+			,dept.mdept_cd
+			,dept.crtd_dt
+			,dept.mdfy_dt
+		from code_data cd left outer join ks_dept_depts dept on cd.code= dept.dept_cd
+		where cd.group_key='DEPT'
+		and cd.use_yn='Y'
+		 <if test="searchDept != 'all'">
+			and cd.code=#{searchDept}
+		</if>
+		order by cd.ord
+	</select>
+
+	<select id="getDeptDeptsDetailByCode" parameterType="string" resultType="com.kspat.web.domain.Dept">
+		select cd.code
+			,cd.name
+			,dept.mdept_cd
+			,dept.crtd_dt
+			,dept.mdfy_dt
+		from code_data cd left outer join ks_dept_depts dept on cd.code= dept.dept_cd
+		where cd.group_key='DEPT'
+		and cd.use_yn='Y'
+		and cd.code=#{searchCode}
+	</select>
+
+	<update id="updateDeptDepts" parameterType="com.kspat.web.domain.Dept">
+		update ks_dept_depts
+		set mdept_cd = #{mdeptCd}, mdfy_id=#{mdfyId},mdfy_dt=getdate()
+		where dept_cd = #{code}
+
+		if @@ROWCOUNT = 0
+		  insert into ks_dept_depts(dept_cd, mdept_cd, crtd_id, crtd_dt, mdfy_id, mdfy_dt)
+		  values(#{code}, #{mdeptCd}, #{crtdId}, getdate(), #{mdfyId}, getdate())
+	</update>
+
+
+
+
+
+
+
+</mapper>

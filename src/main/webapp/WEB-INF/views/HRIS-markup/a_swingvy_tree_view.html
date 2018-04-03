@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>INSPINIA | Tree view</title>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <link href="css/plugins/jsTree/style.min.css" rel="stylesheet">
+
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div id="wrapper">
+
+<nav class="navbar-default navbar-static-side" role="navigation">
+    <div class="sidebar-collapse">
+        <ul class="nav metismenu" id="side-menu">
+          <li class="nav-header">
+            <div class="ibox-content" style="height: 100px;"></div>
+          </li>
+            <li class="nav-header">
+              <div class="dropdown profile-element"> <span>
+                      <img alt="image" class="img-circle" src="img/profile_small.jpg" />
+                       </span>
+                  <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                      <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold">Planet Swingvy</strong>
+                      </span> <span class="text-muted text-xs block">Pioneer<b class="caret"></b></span> </span> </a>
+                  <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                      <li><a href="_swingvy_profile.html">Profile</a></li>
+                      <li><a href="contacts.html">Contacts</a></li>
+                  </ul>
+              </div>
+                <div class="logo-element">
+                    IN+
+                </div>
+            </li>
+
+            <!-- swingvy menu -->
+            <li>
+                <a href="_swingvy_employer_home.html"><i class="fa fa-diamond"></i> <span class="nav-label">Home</span></a>
+            </li>
+            <li>
+                <a href="_swingvy_newspaper.html"><i class="fa fa-diamond"></i> <span class="nav-label">Newspaper</span></a>
+            </li>
+            <li>
+                <a href="mailbox.html"><i class="fa fa-envelope"></i> <span class="nav-label">My Info</span><span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level collapse">
+                    <li><a href="_swingvy_profile.html">Profile</a></li>
+                    <li><a href="_swingvy_table_foo_table.html">Time-off</a></li>
+                    <li><a href="_swingvy_calendar.html">Calendar</a></li>
+                    <li><a href="_swingvy_projects.html">Goal & Performance</a></li>
+                    <li><a href="_swingvy_file_manager.html">Document</a></li>
+                    <li><a href="_swingvy_metrics.html">Report</a></li>
+                    <li><a href="_swingvy_table_data_tables_assets.html">Assets</a></li>
+                    <li><a href="_swingvy_table_data_tables_jobs.html">Job</a></li>
+                    <li><a href="_swingvy_teams_board_teamgoal.html">Team Goal</a></li>
+                    <li><a href="_swingvy_form_basic.html">Onboarding</a></li>
+                    <li><a href="_swingvy_form_wizard.html">Offboarding</a></li>
+                    <li><a href="_swingvy_table_data_tables_team_assets.html">Team Assets</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><i class="fa fa-edit"></i> <span class="nav-label">Team</span><span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level collapse">
+                    <li><a href="_swingvy_projects_team.html">Team Project</a></li>
+                    <li><a href="_swingvy_issue_tracker.html">Issue Tracker</a></li>
+                    <li><a href="_swingvy_file_manager_teammaterial.html">Team Material</a></li>
+                    <li><a href="_swingvy_calendar_team.html">Calendar & Schedule</a></li>
+                    <li><a href="_swingvy_teams_board.html">Goal & Performance</a></li>
+                </ul>
+            </li>
+            <li class="active">
+                <a href="#"><i class="fa fa-desktop"></i> <span class="nav-label">Company</span><span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level collapse">
+                    <li><a href="_swingvy_widgets.html">Company Announcement</a></li>
+                    <li class="active"><a href="#">Org Chart</a></li>
+                    <li><a href="_swingvy_clients.html">Employee</a></li>
+                    <li><a href="_swingvy_file_manager_document.html">Document</a></li>
+                    <li><a href="_swingvy_carousel.html">Letter</a></li>
+                </ul>
+            </li>
+        </ul>
+
+    </div>
+</nav>
+
+<div id="page-wrapper" class="gray-bg">
+<div class="row border-bottom">
+    <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="navbar-header">
+            <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+            <form role="search" class="navbar-form-custom" action="search_results.html">
+                <div class="form-group">
+                    <input type="text" placeholder="Search for something..." class="form-control" name="top-search" id="top-search">
+                </div>
+            </form>
+        </div>
+        <ul class="nav navbar-top-links navbar-right">
+            <li class="dropdown">
+                <ul class="dropdown-menu dropdown-messages">
+                    <li>
+                        <div class="dropdown-messages-box">
+                            <a href="profile.html" class="pull-left">
+                                <img alt="image" class="img-circle" src="img/a7.jpg">
+                            </a>
+                            <div class="media-body">
+                                <small class="pull-right">46h ago</small>
+                                <strong>Mike Loreipsum</strong> started following <strong>Monica Smith</strong>. <br>
+                                <small class="text-muted">3 days ago at 7:58 pm - 10.06.2014</small>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <div class="dropdown-messages-box">
+                            <a href="profile.html" class="pull-left">
+                                <img alt="image" class="img-circle" src="img/a4.jpg">
+                            </a>
+                            <div class="media-body ">
+                                <small class="pull-right text-navy">5h ago</small>
+                                <strong>Chris Johnatan Overtunk</strong> started following <strong>Monica Smith</strong>. <br>
+                                <small class="text-muted">Yesterday 1:21 pm - 11.06.2014</small>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <div class="dropdown-messages-box">
+                            <a href="profile.html" class="pull-left">
+                                <img alt="image" class="img-circle" src="img/profile.jpg">
+                            </a>
+                            <div class="media-body ">
+                                <small class="pull-right">23h ago</small>
+                                <strong>Monica Smith</strong> love <strong>Kim Smith</strong>. <br>
+                                <small class="text-muted">2 days ago at 2:30 am - 11.06.2014</small>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <div class="text-center link-block">
+                            <a href="mailbox.html">
+                                <i class="fa fa-envelope"></i> <strong>Read All Messages</strong>
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </li>
+            <li class="dropdown">
+                <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+                    <i class="fa fa-bell"></i>  <span class="label label-primary">8</span>
+                </a>
+                <ul class="dropdown-menu dropdown-alerts">
+                    <li>
+                        <a href="mailbox.html">
+                            <div>
+                                <i class="fa fa-envelope fa-fw"></i> You have 16 messages
+                                <span class="pull-right text-muted small">4 minutes ago</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="profile.html">
+                            <div>
+                                <i class="fa fa-twitter fa-fw"></i> 3 New Followers
+                                <span class="pull-right text-muted small">12 minutes ago</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="grid_options.html">
+                            <div>
+                                <i class="fa fa-upload fa-fw"></i> Server Rebooted
+                                <span class="pull-right text-muted small">4 minutes ago</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <div class="text-center link-block">
+                            <a href="notifications.html">
+                                <strong>See All Alerts</strong>
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </li>
+
+
+            <li>
+                <a href="login.html">
+                    <i class="fa fa-sign-out"></i> Log out
+                </a>
+            </li>
+        </ul>
+
+    </nav>
+</div>
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Org Chart</h2>
+    </div>
+    <div class="col-lg-2">
+
+    </div>
+</div>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+
+                    <strong>jsTree</strong> is jquery plugin, that provides interactive trees. It is absolutely free, open source and distributed under the MIT license. jsTree is easily extendable, themable and configurable, it supports HTML & JSON data sources and AJAX loading.
+                    Get more info on: <a href="http://www.jstree.com/" target="_blank">http://www.jstree.com/</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Basic example <small>with custom Font Awesome icons.</small></h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+
+                    <div id="jstree1">
+                        <ul>
+                            <li class="jstree-open">Admin theme
+                                <ul>
+                                    <li>css
+                                        <ul>
+                                            <li data-jstree='"type":"css"}'>animate.css</li>
+                                            <li data-jstree='"type":"css"}'>bootstrap.css</li>
+                                            <li data-jstree='"type":"css"}'>style.css</li>
+                                        </ul>
+                                    </li>
+                                    <li>email-templates
+                                        <ul>
+                                            <li data-jstree='"type":"html"}'>action.html</li>
+                                            <li data-jstree='"type":"html"}'>alert.html</li>
+                                            <li data-jstree='"type":"html"}'>billing.html</li>
+                                        </ul>
+                                    </li>
+                                    <li>fonts
+                                        <ul>
+                                            <li data-jstree='"type":"svg"}'>glyphicons-halflings-regular.eot</li>
+                                            <li data-jstree='"type":"svg"}'>glyphicons-halflings-regular.svg</li>
+                                            <li data-jstree='"type":"svg"}'>glyphicons-halflings-regular.ttf</li>
+                                            <li data-jstree='"type":"svg"}'>glyphicons-halflings-regular.woff</li>
+                                        </ul>
+                                    </li>
+                                    <li class="jstree-open">img
+                                        <ul>
+                                            <li data-jstree='"type":"img"}'>profile_small.jpg</li>
+                                            <li data-jstree='"type":"img"}'>angular_logo.png</li>
+                                            <li class="text-navy" data-jstree='"type":"img"}'>html_logo.png</li>
+                                            <li class="text-navy" data-jstree='"type":"img"}'>mvc_logo.png</li>
+                                        </ul>
+                                    </li>
+                                    <li class="jstree-open">js
+                                        <ul>
+                                            <li data-jstree='"type":"js"}'>inspinia.js</li>
+                                            <li data-jstree='"type":"js"}'>bootstrap.js</li>
+                                            <li data-jstree='"type":"js"}'>jquery-2.1.1.js</li>
+                                            <li data-jstree='"type":"js"}'>jquery-ui.custom.min.js</li>
+                                            <li  class="text-navy" data-jstree='"type":"js"}'>jquery-ui-1.10.4.min.js</li>
+                                        </ul>
+                                    </li>
+                                    <li data-jstree='"type":"html"}'> affix.html</li>
+                                    <li data-jstree='"type":"html"}'> dashboard.html</li>
+                                    <li data-jstree='"type":"html"}'> buttons.html</li>
+                                    <li data-jstree='"type":"html"}'> calendar.html</li>
+                                    <li data-jstree='"type":"html"}'> contacts.html</li>
+                                    <li data-jstree='"type":"html"}'> css_animation.html</li>
+                                    <li  class="text-navy" data-jstree='"type":"html"}'> flot_chart.html</li>
+                                    <li  class="text-navy" data-jstree='"type":"html"}'> google_maps.html</li>
+                                    <li data-jstree='"type":"html"}'> icons.html</li>
+                                    <li data-jstree='"type":"html"}'> invoice.html</li>
+                                    <li data-jstree='"type":"html"}'> login.html</li>
+                                    <li data-jstree='"type":"html"}'> mailbox.html</li>
+                                    <li data-jstree='"type":"html"}'> profile.html</li>
+                                    <li  class="text-navy" data-jstree='"type":"html"}'> register.html</li>
+                                    <li data-jstree='"type":"html"}'> timeline.html</li>
+                                    <li data-jstree='"type":"html"}'> video.html</li>
+                                    <li data-jstree='"type":"html"}'> widgets.html</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>JSON example</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+
+                    <div id="using_json"></div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<div class="footer">
+    <div class="pull-right">
+        10GB of <strong>250GB</strong> Free.
+    </div>
+    <div>
+        <strong>Copyright</strong> Example Company &copy; 2014-2015
+    </div>
+</div>
+
+</div>
+</div>
+
+
+
+<!-- Mainly scripts -->
+<script src="js/jquery-2.1.1.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+<!-- Custom and plugin javascript -->
+<script src="js/inspinia.js"></script>
+<script src="js/plugins/pace/pace.min.js"></script>
+
+<script src="js/plugins/jsTree/jstree.min.js"></script>
+
+<style>
+    .jstree-open > .jstree-anchor > .fa-folder:before {
+        content: "\f07c";
+    }
+
+    .jstree-default .jstree-icon.none {
+        width: 0;
+    }
+</style>
+
+<script>
+    $(document).ready(function(){
+
+        $('#jstree1').jstree({
+            'core' : {
+                'check_callback' : true
+            },
+            'plugins' : [ 'types', 'dnd' ],
+            'types' : {
+                'default' : {
+                    'icon' : 'fa fa-folder'
+                },
+                'html' : {
+                    'icon' : 'fa fa-file-code-o'
+                },
+                'svg' : {
+                    'icon' : 'fa fa-file-picture-o'
+                },
+                'css' : {
+                    'icon' : 'fa fa-file-code-o'
+                },
+                'img' : {
+                    'icon' : 'fa fa-file-image-o'
+                },
+                'js' : {
+                    'icon' : 'fa fa-file-text-o'
+                }
+
+            }
+        });
+
+        $('#using_json').jstree({
+            'core' : {
+            'data' : [
+                'Empty Folder',
+                {
+                    'text': 'Resources',
+                    'state': {
+                        'opened': true
+                    },
+                    'children': [
+                        {
+                            'text': 'css',
+                            'children': [
+                                {
+                                    'text': 'animate.css', 'icon': 'none'
+                                },
+                                {
+                                    'text': 'bootstrap.css', 'icon': 'none'
+                                },
+                                {
+                                    'text': 'main.css', 'icon': 'none'
+                                },
+                                {
+                                    'text': 'style.css', 'icon': 'none'
+                                }
+                            ],
+                            'state': {
+                                'opened': true
+                            }
+                        },
+                        {
+                            'text': 'js',
+                            'children': [
+                                {
+                                    'text': 'bootstrap.js', 'icon': 'none'
+                                },
+                                {
+                                    'text': 'inspinia.min.js', 'icon': 'none'
+                                },
+                                {
+                                    'text': 'jquery.min.js', 'icon': 'none'
+                                },
+                                {
+                                    'text': 'jsTree.min.js', 'icon': 'none'
+                                },
+                                {
+                                    'text': 'custom.min.js', 'icon': 'none'
+                                }
+                            ],
+                            'state': {
+                                'opened': true
+                            }
+                        },
+                        {
+                            'text': 'html',
+                            'children': [
+                                {
+                                    'text': 'layout.html', 'icon': 'none'
+                                },
+                                {
+                                    'text': 'navigation.html', 'icon': 'none'
+                                },
+                                {
+                                    'text': 'navbar.html', 'icon': 'none'
+                                },
+                                {
+                                    'text': 'footer.html', 'icon': 'none'
+                                },
+                                {
+                                    'text': 'sidebar.html', 'icon': 'none'
+                                }
+                            ],
+                            'state': {
+                                'opened': true
+                            }
+                        }
+                    ]
+                },
+                'Fonts',
+                'Images',
+                'Scripts',
+                'Templates',
+            ]
+        } });
+
+    });
+</script>
+
+
+</body>
+
+</html>

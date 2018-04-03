@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kspat.web.mapper.OvertimeMapper">
+	<select id="getReqDateOvertimeInfo" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.Overtime">
+		select st_dt as reqDt
+           ,CONVERT(char(7), st_dt, 23) as reqYm
+           ,convert(varchar(5),exp_out_tm,114) as exp_out_tm
+           ,convert(varchar(5),out_tm,114) as out_tm
+           ,(cal_work_tm_min-work_tm_min) overtime_min
+           ,CASE
+				WHEN out_tm <![CDATA[>=]]> #{searchDt}+' 19:00:00' THEN
+					(
+					CASE
+						WHEN (cal_work_tm_min-work_tm_min) <![CDATA[>=]]> 120 THEN '001'
+						ELSE '002'
+					END
+					)
+				ELSE '002'
+			END as result
+
+<!--            CASE -->
+<!-- 			WHEN (cal_work_tm_min-work_tm_min) <![CDATA[>=]]> 120 THEN '001' -->
+<!-- 			WHEN (cal_work_tm_min-work_tm_min) <![CDATA[<]]> 120 THEN '002' -->
+<!-- 			ELSE '003' -->
+<!-- 			END result -->
+           ,id as crtdId
+		   ,case holiday_yn when 'Y' then 'true' else 'false' end as holidayYn
+		   ,case data_error_yn when 'Y' then 'true' else 'false' end as dataErrorYn
+         from ks_daily_stat where st_dt=#{searchDt} and id=#{crtdId}
+	</select>
+
+	<select id="checkDuplicateReq" parameterType="com.kspat.web.domain.SearchParam" resultType="int">
+		select count(id) from ks_overtime where req_dt=#{searchDt} and crtd_id=#{crtdId}
+	</select>
+
+
+	<insert id="insertOvertime" parameterType="com.kspat.web.domain.Overtime"  useGeneratedKeys="true" keyProperty="id">
+	INSERT INTO ks_overtime(req_dt,req_ym,exp_out_tm,out_tm,overtime_min,result,crtd_id,crtd_dt,mdfy_id,mdfy_dt)
+	VALUES   (convert(date,#{reqDt}),SUBSTRING(#{reqDt},1,7),convert(datetime,#{reqDt}+' '+#{expOutTm}) ,convert(datetime,#{reqDt}+' '+#{outTm}) ,#{overtimeMin} ,#{result},#{crtdId} ,getdate() ,#{mdfyId},getdate())
+	</insert>
+
+	<select id="getOvertimeDetail" resultType="com.kspat.web.domain.Overtime">
+		select ot.id
+			,convert(varchar(10),ot.req_dt,120) as req_dt
+			,ot.req_ym
+			,u.caps_name as name
+			,(select name from code_data where group_key='DEPT' and code=u.dept_cd and use_yn='Y') as deptNm
+			,convert(varchar(5),ot.exp_out_tm,114) as exp_out_tm
+			,convert(varchar(5),ot.out_tm,114) as out_tm
+			,ot.overtime_min
+			,ot.memo
+			,ot.result
+			,(select caps_name from ks_user where id=ot.crtd_id) as crtd_id
+			,ot.crtd_dt
+			,(select caps_name from ks_user where id=ot.mdfy_id) as mdfy_id
+			,ot.mdfy_dt
+		from ks_overtime ot ,ks_user u
+		where ot.id=#{value}
+		and ot.crtd_id=u.id
+	</select>
+
+	<select id="getOvertimeListById" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.Overtime">
+		select ot.id
+			,convert(varchar(10),ot.req_dt,120) as req_dt
+			,ot.req_ym
+			,u.caps_name as name
+			,(select name from code_data where group_key='DEPT' and code=u.dept_cd and use_yn='Y') as deptNm
+			,convert(varchar(5),ot.exp_out_tm,114) as exp_out_tm
+			,convert(varchar(5),ot.out_tm,114) as out_tm
+			,ot.overtime_min
+			,ot.memo
+			,ot.result
+			,(select caps_name from ks_user where id=ot.crtd_id) as crtd_id
+			,ot.crtd_dt
+			,(select caps_name from ks_user where id=ot.mdfy_id) as mdfy_id
+			,ot.mdfy_dt
+		from ks_overtime ot ,ks_user u
+		where ot.crtd_id=#{crtdId} and req_ym=#{searchDM}
+		<if test="searchState != 'all'">
+		 and result=#{searchState}
+		 </if>
+		and ot.crtd_id=u.id
+	</select>
+
+	<select id="getOvertimeAdminList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.Overtime">
+		select ot.id
+			,convert(varchar(10),ot.req_dt,120) as req_dt
+			,ot.req_ym
+			,u.caps_name as name
+			,(select name from code_data where group_key='DEPT' and code=u.dept_cd and use_yn='Y') as deptNm
+			,convert(varchar(5),ot.exp_out_tm,114) as exp_out_tm
+			,convert(varchar(5),ot.out_tm,114) as out_tm
+			,ot.overtime_min
+			,ot.memo
+			,ot.result
+			,(select caps_name from ks_user where id=ot.crtd_id) as crtd_id
+			,ot.crtd_dt
+			,(select caps_name from ks_user where id=ot.mdfy_id) as mdfy_id
+			,ot.mdfy_dt
+		from ks_overtime ot ,ks_user u
+		where req_ym=#{searchDM}
+		<if test="searchState != 'all'">
+		 and result=#{searchState}
+		</if>
+		<if test="searchDept != 'all'">
+		 and u.dept_cd=#{searchDept}
+		</if>
+		<if test="searchText != ''">
+		and u.caps_name LIKE '%' + #{searchText} + '%'
+		</if>
+		and ot.crtd_id=u.id
+
+
+	</select>
+
+	<select id="getRequestOvertimeList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.Overtime">
+		select ot.id
+			,convert(varchar(10),ot.req_dt,120) as req_dt
+			,ot.req_ym
+			,u.caps_name as name
+			,convert(varchar(5),ot.exp_out_tm,114) as exp_out_tm
+			,convert(varchar(5),ot.out_tm,114) as out_tm
+			,ot.overtime_min
+			,ot.result
+			,ot.crtd_id
+			,ot.crtd_dt
+			,ot.mdfy_id
+			,ot.mdfy_dt
+		from ks_overtime ot ,ks_user u
+		where req_dt=#{searchDt}
+		and ot.crtd_id=u.id
+
+	</select>
+
+	<update id="updateReqUserOvertime" parameterType="com.kspat.web.domain.Overtime">
+		update ks_overtime
+		set exp_out_tm = convert(datetime,#{reqDt}+' '+#{expOutTm}),
+			out_tm = convert(datetime,#{reqDt}+' '+#{outTm}),
+			overtime_min = #{overtimeMin},
+			memo=#{memo},
+			result = #{result},
+			mdfy_id=1,
+			mdfy_dt=getdate()
+		where id=#{id}
+	</update>
+
+
+
+</mapper>

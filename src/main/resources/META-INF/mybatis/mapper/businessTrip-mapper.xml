@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kspat.web.mapper.BusinessTripMapper">
+
+	<insert id="insertBusinessTrip" parameterType="com.kspat.web.domain.BusinessTrip" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO ks_business_trip(start_dt,end_dt,destination,memo,crtd_id,crtd_dt,mdfy_id,mdfy_dt)
+     	VALUES (convert(date,#{startDt}),convert(date,#{endDt}),#{destination},#{memo},#{crtdId},getdate(),#{mdfyId},getdate())
+	</insert>
+
+	<select id="getBusinessTripDetailById" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.BusinessTrip">
+		select id
+			,convert(varchar(10),start_dt,120) as start_dt
+			,convert(varchar(10),end_dt,120) as end_dt
+			,convert(varchar(10),start_dt,120) + ' ~ ' +  convert(varchar(10),end_dt,120) as trip_range
+			,destination
+			,memo
+			,(select caps_name from ks_user where id=kbt.crtd_id) as crtd_id
+			,crtd_dt
+			,(select caps_name from ks_user where id=kbt.mdfy_id) as mdfy_id
+			,mdfy_dt
+		from ks_business_trip kbt
+		where id=#{searchId}
+	</select>
+
+	<select id="getUserBusinessTripList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.BusinessTrip">
+		select id
+			,convert(varchar(10),start_dt,120) as start_dt
+			,convert(varchar(10),end_dt,120) as end_dt
+			,destination
+			,memo
+			,(select caps_name from ks_user where id=kbt.crtd_id) as crtd_id
+			,crtd_dt
+			,(select caps_name from ks_user where id=kbt.mdfy_id) as mdfy_id
+			,mdfy_dt
+		from ks_business_trip kbt
+		where crtd_id=#{crtdId}
+		and (start_dt  between #{fromDate} and #{toDate} or end_dt between #{fromDate} and #{toDate})
+	</select>
+
+	<update id="updateBusinessTrip" parameterType="com.kspat.web.domain.BusinessTrip">
+        update ks_business_trip
+        set start_dt=convert(date,#{startDt})
+            ,end_dt=convert(date,#{endDt})
+            ,destination=#{destination}
+            ,memo=#{memo}
+            ,mdfy_id=#{mdfyId}
+            ,mdfy_dt=getdate()
+        where id=#{id}
+
+	</update>
+
+	<delete id="deleteBusinessTrip" parameterType="com.kspat.web.domain.BusinessTrip">
+		delete from ks_business_trip
+		where id=#{id}
+	</delete>
+
+
+
+
+
+</mapper>

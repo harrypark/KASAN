@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kspat.web.mapper.UserMapper">
+
+	<select id="getRawDataSearchList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.RawData">
+		 select id,userName
+		 from Attendance
+		 group by id,userName
+		 order by userName;
+	</select>
+
+	<select id="getUserSearchList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.User">
+		select id,caps_name,dept.name deptName
+		from ks_user ku,
+		(select code,name from code_data where group_key='DEPT' and use_yn='Y') dept
+		where ku.dept_cd=dept.code and auth_cd <![CDATA[<>]]> '003' and state_cd='001'
+		<if test="searchDept != 'all'">
+			and dept_cd=#{searchDept}
+		</if>
+	</select>
+
+	<!--
+	<select id="getManagerUserList" parameterType="hashmap" resultType="com.kspat.web.domain.User">
+		select id,caps_name,dept.name deptName
+		from ks_user ku,
+		(select code,name from code_data where group_key='DEPT' and use_yn='Y') dept
+		where ku.dept_cd=dept.code and auth_cd <![CDATA[<>]]> '003' and state_cd='001'
+		and dept_cd in <foreach collection="depts" item="type" index="index"  open="(" close=")" separator=",">
+			            #{type}
+			        </foreach>
+
+	</select>
+
+	 -->
+
+
+
+
+	<select id="getRawDataList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.RawData">
+		SELECT convert(datetime,substring(Att_Date,1,8) + ' ' + substring(Att_Date,9,2) + ':' + substring(Att_Date,11,2) + ':' +substring(Att_Date,13,2)) as Att_Date
+		      ,Gate
+		      ,id
+		      ,UserName
+		      ,detail
+		      ,company
+		      ,team
+		      ,part
+		      ,grade
+		      ,card
+		 FROM Attendance
+		 where 1=1
+		 and Att_Date  between (#{fromDate}+'000000') and (#{toDate}+'235959')
+		 <if test="searchUser != 'all'">
+		 and id=SUBSTRING(#{searchUser},1,CHARINDEX('|',#{searchUser})-1)
+		 and userName=SUBSTRING(#{searchUser},CHARINDEX('|',#{searchUser})+1,LEN(#{searchUser}))
+		 </if>
+
+	</select>
+
+	<select id="getRawDataCheckCount" parameterType="com.kspat.web.domain.SearchParam" resultType="int">
+		SELECT count(*)
+		 FROM Attendance
+		 where Att_Date  between #{fromDate} and #{toDate}
+	</select>
+
+	<select id="getUserList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.User">
+		select id,
+			   caps_id,
+			   caps_name,
+			   dept_cd,
+			   (select name from code_data where group_key='DEPT' and code=ku.dept_cd and use_yn='Y') as dept_name,
+			   position_cd,
+			   (select name from code_data where group_key='POSITION' and code=ku.position_cd and use_yn='Y') as position_name,
+			   login_id,
+			   login_pwd,
+			   email,
+			   auth_cd,
+			   dash_state,
+			   inside_tel,
+			   (select name from code_data where group_key='AUTH' and code=ku.auth_cd) as auth_name,
+			   state_cd,
+			   (select name from code_data where group_key='USER_STATE' and code=ku.state_cd) as state_name,
+			    (select caps_name from ks_user where id=ku.crtd_id ) as crtd_id,
+			   crtd_dt,
+			   (select caps_name from ks_user where id=ku.mdfy_id ) as mdfy_id,
+			   mdfy_dt,
+			   convert(varchar(10), state_apply_dt, 120) as state_apply_dt,
+			   convert(varchar(10), hire_dt, 120) as hire_dt
+		from ks_user ku
+		where 1=1
+		<if test="searchText != ''">
+			and ( caps_name LIKE '%' + #{searchText} + '%' or email LIKE '%' + #{searchText} + '%')
+		</if>
+		<if test="searchDept != 'all'">
+			and dept_cd=#{searchDept}
+		</if>
+		<if test="searchPosition != 'all'">
+			and position_cd=#{searchPosition}
+		</if>
+		<if test="searchState != 'all'">
+			and state_cd=#{searchState}
+		</if>
+		<if test="searchAuth != 'all'">
+			and auth_cd=#{searchAuth}
+		</if>
+	</select>
+
+	<select id="getUserDetailById" parameterType="string" resultType="com.kspat.web.domain.User">
+		select id,
+			   caps_id,
+			   caps_name,
+			   dept_cd,
+			   (select name from code_data where group_key='DEPT' and code=ku.dept_cd and use_yn='Y') as dept_name,
+			   position_cd,
+			   (select name from code_data where group_key='POSITION' and code=ku.position_cd and use_yn='Y') as position_name,
+			   login_id,
+			   login_pwd,
+			   email,
+			   auth_cd,
+			   dash_state,
+			   inside_tel,
+			   (select name from code_data where group_key='AUTH' and code=ku.auth_cd) as auth_name,
+			   state_cd,
+			   (select name from code_data where group_key='USER_STATE' and code=ku.state_cd) as state_name,
+			    (select caps_name from ks_user where id=ku.crtd_id ) as crtd_id,
+			   crtd_dt,
+			   (select caps_name from ks_user where id=ku.mdfy_id ) as mdfy_id,
+			   mdfy_dt,
+			   convert(varchar(10), state_apply_dt, 120) as state_apply_dt,
+			   convert(varchar(10), hire_dt, 120) as hire_dt
+		from ks_user ku
+		where id=#{searchId}
+	</select>
+
+	<select id="capsInfoDuplicateCount" parameterType="com.kspat.web.domain.User" resultType="int">
+		select count(*)
+		from ks_user
+		where caps_id=#{capsId} and caps_name=#{capsName}
+		<if test="isUpdate == true">
+		 and id <![CDATA[<>]]> #{id}
+		</if>
+	</select>
+
+	<select id="loginIdDuplicateCount" parameterType="com.kspat.web.domain.User" resultType="int">
+		select count(*)
+		from ks_user
+		where login_id=#{loginId}
+		<if test="isUpdate == true">
+		 and id <![CDATA[<>]]> #{id}
+		</if>
+	</select>
+
+	<insert id="insertUser" parameterType="com.kspat.web.domain.User" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO ks_user (caps_id,caps_name,dept_cd,position_cd,login_id,login_pwd,email,auth_cd,state_cd,dash_state,inside_tel,crtd_id,crtd_dt,mdfy_id,mdfy_dt,state_apply_dt,hire_dt)
+		VALUES (#{capsId},#{capsName},#{deptCd},#{positionCd},#{loginId},#{loginPwd},#{email},#{authCd},#{stateCd} ,#{dashState},#{insideTel},#{crtdId},getdate(),#{mdfyId},getdate(),CONVERT(DATE,#{stateApplyDt}),CONVERT(DATE,#{hireDt}))
+	</insert>
+
+	<update id="updateUser" parameterType="com.kspat.web.domain.User">
+		UPDATE ks_user
+		SET dept_cd=#{deptCd},position_cd=#{positionCd},email=#{email},auth_cd=#{authCd},state_cd=#{stateCd},dash_state=#{dashState},inside_tel=#{insideTel},mdfy_id=#{mdfyId},mdfy_dt=getdate(),state_apply_dt=CONVERT(DATE,#{stateApplyDt}),hire_dt=CONVERT(DATE,#{hireDt})
+		<if test="stateCd == '003'">,caps_id=#{ranStr}+'_'+caps_id</if>
+		WHERE id=#{id}
+	</update>
+
+	<select id="getSearchUserList" resultType="com.kspat.web.domain.User">
+		select id, caps_id, caps_name from ks_user order by caps_name
+	</select>
+
+
+	<select id="getMailSendToList" parameterType="string" resultType="string">
+		select email from ks_user where dept_cd=#{value} and auth_cd='002' and state_cd='001'
+	</select>
+
+	<update id="updateUserPassword" parameterType="com.kspat.web.domain.User">
+		update ks_user
+		set login_pwd=#{loginPwd}
+		where id=#{id}
+	</update>
+
+	<update id="userPasswordChange" parameterType="com.kspat.web.domain.Pwd">
+		update ks_user
+		set login_pwd=#{newPassword}
+		where id=#{id}
+	</update>
+
+	<select id="getManagerList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.User">
+		select ku.id,
+			   caps_id,
+			   caps_name,
+			   dept_cd,
+			   md.mdept_cd,
+			   (select name from code_data where group_key='DEPT' and code=ku.dept_cd and use_yn='Y') as dept_name,
+			   (select name from code_data where group_key='POSITION' and code=ku.position_cd) as position_name,
+			   (select name from code_data where group_key='AUTH' and code=ku.auth_cd) as auth_name,
+			   (select name from code_data where group_key='USER_STATE' and code=ku.state_cd) as state_name
+
+		from ks_user ku left outer join ks_manager_dept md on ku.id=md.id
+		where 1=1
+		<if test="searchText != ''">
+			and ( ku.caps_name LIKE '%' + #{searchText} + '%' or ku.email LIKE '%' + #{searchText} + '%')
+		</if>
+		<if test="searchDept != 'all'">
+			and ku.dept_cd=#{searchDept}
+		</if>
+		<if test="searchAuth != 'all'">
+			and ku.auth_cd=#{searchAuth}
+		</if>
+	</select>
+
+
+	<select id="getManagerDetailById" parameterType="string" resultType="com.kspat.web.domain.User">
+		select ku.id,
+			   caps_id,
+			   caps_name,
+			   dept_cd,
+			   mdept_cd,
+			   (select name from code_data where group_key='DEPT' and code=ku.dept_cd and use_yn='Y') as dept_name,
+			   (select name from code_data where group_key='POSITION' and code=ku.position_cd) as position_name,
+			   (select name from code_data where group_key='AUTH' and code=ku.auth_cd) as auth_name,
+			   (select name from code_data where group_key='USER_STATE' and code=ku.state_cd) as state_name
+		from ks_user ku left outer join ks_manager_dept md on ku.id=md.id
+		where ku.id=#{searchId}
+		and ku.auth_cd='002'
+	</select>
+
+	<update id="updateManager" parameterType="com.kspat.web.domain.User">
+		update ks_manager_dept
+		set mdept_cd = #{mdeptCd}, mdfy_id=#{mdfyId},mdfy_dt=getdate()
+		where id = #{id}
+
+		if @@ROWCOUNT = 0
+		  insert into ks_manager_dept(id, mdept_cd, crtd_id, crtd_dt, mdfy_id, mdfy_dt)
+		  values(#{id}, #{mdeptCd}, #{crtdId}, getdate(), #{mdfyId}, getdate())
+
+	</update>
+
+	<select id="mailSendManagerListByDeptcd" parameterType="string" resultType="string">
+		select email
+		from ks_manager_dept md, ks_user ku
+		where md.id=ku.id and  md.mdept_cd LIKE '%' + #{value} + '%'
+	 </select>
+
+	 <select id="mailSendManagerDeptListByDeptcd" parameterType="string" resultType="string">
+
+		 select email from
+			(
+			select email
+			from ks_manager_dept md, ks_user ku
+			where md.id=ku.id and  md.mdept_cd LIKE '%' + #{value} + '%'
+			union all
+			select email from ks_user
+			where auth_cd <![CDATA[<>]]> '003' and state_cd='001'
+			and dept_cd in (select dept_cd from ks_dept_depts where mdept_cd LIKE '%' + #{value} + '%')
+			) a
+		 group by a.email
+	</select>
+
+	 <select id="getAdminEmailAddress" resultType="string">
+	 select email from ks_user where auth_cd='003'
+	 </select>
+
+	 <select id="getManagerDepts" resultType="string">
+	 	select mdept_cd from ks_manager_dept where id=#{value}
+	 </select>
+
+	 <resultMap type="com.kspat.web.domain.DeptMapping" id="DeptManagerCountMap">
+	    <result property="name" column="name"/>
+	    <result property="code" column="code"/>
+	    <collection property="count" javaType="int" column="code" ofType="int" select="getSubDeptManagerCount"/>
+	</resultMap>
+
+	<select id="getSubDeptManagerCount" parameterType="string" resultType="int">
+		select isnull(count(id),0) from ks_manager_dept where mdept_cd like '%' + #{value} + '%'
+	</select>
+
+	<select id="getDeptManagerCount" resultMap="DeptManagerCountMap">
+		select name,code from  code_data where group_key='DEPT' and use_yn='Y' order by ord
+	</select>
+
+	<select id="mailSendAllUserList" resultType="string">
+		select email from ks_user where auth_cd <![CDATA[<>]]> '003' and state_cd='001';
+	</select>
+
+	<update id="updateAttendanceId" parameterType="com.kspat.web.domain.User">
+		update Attendance
+		set id=#{ranStr}+'_'+id
+		where id=#{capsId} and userName=#{capsName}
+	</update>
+
+	<delete id="deleteUserStateChangeDailyStat" parameterType="com.kspat.web.domain.User">
+	delete from ks_daily_stat where id=#{id} and st_dt <![CDATA[>=]]> #{stateApplyDt}
+
+	</delete>
+</mapper>
