@@ -38,4 +38,6 @@ public interface StatMapper {
 
 	void updateLatePoint(LatePoint lp);
 
+	List<Score> getAnnualEmailSendScoreList(SearchParam searchParam);
+
 }

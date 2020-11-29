@@ -94,7 +94,7 @@ public class DailyStatUtil {
 					//logger.debug(us.toString());
 					//logger.debug("======[3].휴가의 경우 끝 =====================");
 				}else if(us.getHlLeave() != null){
-					//logger.debug("======[4].반휴의 경우 시작 =====================");
+					logger.info("======[4].반휴의 경우 시작 =====================");
 					workTime = 4*60;//반휴근무시간
 					us.setWorkTmMin(workTime);
 
@@ -123,7 +123,12 @@ public class DailyStatUtil {
 
 
 					if(us.getCalHereGo() != null){//출근 기록이 있으면 퇴근예상시간 계산
-						us.setExpHereOut(DateTimeUtil.getExpectedHereOutTime(us.getCalHereGo(),us.getWorkTmMin()));
+						//여기 - 반휴퇴근예상시간계산
+						//us.setExpHereOut(DateTimeUtil.getExpectedHereOutTime(us.getCalHereGo(),us.getWorkTmMin()));
+						logger.info("======[4].반휴 퇴근예상시간계산 =====================");
+						logger.info("us.getCalHereGo():"+us.getCalHereGo());
+						logger.info("us.getWorkTmMin():"+us.getWorkTmMin());
+						us.setExpHereOut(DateTimeUtil.getExpectedHereOutTimeStandardTime(us.getCalHereGo(),us.getWorkTmMin()));
 					}
 
 					//대체근무가 있다면
@@ -142,11 +147,11 @@ public class DailyStatUtil {
 						*/
 
 					}
-
+					/*
 					if(us.getCalHereGo() != null){//출근 기록이 있으면 퇴근예상시간 계산
 						us.setExpHereOut(DateTimeUtil.getExpectedHereOutTime(us.getCalHereGo(),us.getWorkTmMin()));
 					}
-
+					*/
 					us.setInOffice(checkInoffice(us));
 					//logger.debug("======[4].반휴의 경우 끝 =====================");
 				}else{
@@ -180,7 +185,7 @@ public class DailyStatUtil {
 							//점심시간 포함이라면 근무시간에서 60분 추가 마이너스
 							us.setWorkTmMin(us.getWorkTmMin()-re.getTerm()-60);//대체근무 신청시간 만큼 근무시간 마이너스
 						}else{
-							us.setWorkTmMin(us.getWorkTmMin()-re.getTerm());//대체근무 신청시간 만큼 근무시간 마이너스
+							us.setWorkTmMin(us.getWorkTmMin()-re.getTerm()-60);//대체근무 신청시간 만큼 근무시간 마이너스
 						}
 
 
@@ -196,7 +201,37 @@ public class DailyStatUtil {
 
 					//퇴근예정시간계산
 					if(us.getCalHereGo() != null){
-						us.setExpHereOut(DateTimeUtil.getExpectedHereOutTime(us.getCalHereGo(),us.getWorkTmMin()));
+						if(us.getRepl() != null) {
+							//대체근무가 있을경우
+							logger.info("======[5].반휴 퇴근예상시간계산 =====================");
+							logger.info("us.getCalHereGo():"+us.getCalHereGo());
+							logger.info("us.getWorkTmMin():"+us.getWorkTmMin());
+							us.setExpHereOut(DateTimeUtil.getExpectedHereOutTimeStandardTime(us.getCalHereGo(),us.getWorkTmMin()));
+						}else {
+							us.setExpHereOut(DateTimeUtil.getExpectedHereOutTime(us.getCalHereGo(),us.getWorkTmMin()));
+						}
+						
+						
+						
+						/*
+						 * 대체근무시간이 퇴근시간 쪽으로 설정되있을경우 퇴근예상시간이 대체시작시간보다 크다면 대체 시작시간을 퇴근 예상시간으로 변경
+						 */
+						//if(us.getRepl() != null) {
+							//Replace re = us.getRepl();
+							//logger.debug("대체근무 시작시간:"+re.getReplStartTm());
+							//logger.debug("퇴근예정시간:"+us.getExpHereOut());
+							
+							/*
+							 * 대체근무가 있을 경우
+							 * 퇴근 예상시간이 대체근무 시작 시간 이후, 종료시간 이전 일경우 퇴근 예정시간을 대체근무 시작시간으로 대체
+							 * 20190827 대체근무 퇴근예상시간 변경으로 삭제
+							 */
+//							if(computeReplaceExpHereOutTime(re ,us.getExpHereOut())) {
+//								us.setExpHereOut(re.getReplDt() +" "+re.getReplStartTm());
+//							}
+						//}
+						
+						
 					}
 					us.setInOffice(checkInoffice(us));
 					//logger.debug(us.toString());
@@ -206,6 +241,32 @@ public class DailyStatUtil {
 			//}//user id :2
 		}
 		return list;
+	}
+
+
+	/*
+	 * 대체근무가 있을 경우
+	 * 퇴근 예상시간이 대체근무 시작 시간 이후, 종료시간 이전 일경우 퇴근 예정시간을 대체근무 시작시간으로 대체
+	 */
+	private static boolean computeReplaceExpHereOutTime(Replace re, String expHereOut) {
+		boolean res=false;
+		//logger.debug("******************************************************************");
+		//대체 시작시간
+		DateTime reStartDateTime = DateTimeUtil.parseStringToDatetime(re.getReplDt() + " " + re.getReplStartTm(),"yyyy-MM-dd HH:mm");
+		//대체 종료시간
+		DateTime reEndDateTime = DateTimeUtil.parseStringToDatetime(re.getReplDt() + " " + re.getReplEndTm(),"yyyy-MM-dd HH:mm");
+		//계산된 퇴근예상시간
+		DateTime orgExpHereOutDateTime = DateTimeUtil.parseStringToDatetime(expHereOut,"yyyy-MM-dd HH:mm");
+		
+		System.out.println("reStartDateTime:"+reStartDateTime);
+		System.out.println("orgExpHereOutDateTime:"+orgExpHereOutDateTime);
+		
+		if(reStartDateTime.isBefore(orgExpHereOutDateTime) && orgExpHereOutDateTime.isBefore(reEndDateTime)){
+			res=true;
+			//logger.debug("예상퇴근시간이 중간에 걸린다.");
+		}
+		return res;
+		
 	}
 
 
@@ -386,6 +447,8 @@ public class DailyStatUtil {
 						for(Workout wo: us.getWorkout()){
 							if("Y".equals(wo.getHereOutYn())){//외근 현지 퇴근 이면 퇴근시간변경
 								us.setHereOut(wo.getOutDt() + " " + wo.getEndTm());
+								//20180829 외근 현지 퇴근일경우 퇴근시간을 현지 퇴근시간으로 지정 해야 퇴근시간이 찍혀 무단 결근이 방지된다.
+								us.setCalHereOut(wo.getOutDt() + " " + wo.getEndTm());
 							}
 						}
 					}

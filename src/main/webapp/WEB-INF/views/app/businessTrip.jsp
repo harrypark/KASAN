@@ -30,6 +30,19 @@
 					    <input type="text" class="form-control trap" id="toDate" name="toDate" readonly="readonly">
 					</div>
                 </div>
+                <div class="col-lg-2 col-md-6 col-sm-12">
+                	 <select class="form-control chosen" id="searchDept" name="searchDept">
+                        <option value="all">부서_전체</option>
+                        <c:forEach items="${deptList}" var="list">
+                        	<option value="${list.code }">${list.name }</option>
+                        </c:forEach>
+                    </select>
+                </div>
+                <div class="col-lg-2 col-md-6 col-sm-12">
+                    <select class="form-control chosen" id="searchUser" name="searchUser">
+                        <option value="all">전체</option>
+                    </select>
+                </div>
                  <div class="col-lg-3 col-md-6 col-sm-6">
                 	<button class="btn btn-w-m btn-primary m-r-sm" type="button" data-toggle="modal"  data-keyboard="false" data-backdrop="static" data-target="#modal_businessTrip" style="margin-bottom: 0px;"> Add </button>
                 </div>
@@ -44,6 +57,7 @@
 			        <thead>
 			        <tr>
 			        	<th>ID</th>
+			        	<th>둥록자ID</th>
 			            <th>시작일</th>
 			            <th>종료일</th>
 			            <th>목적지(장소)</th>
@@ -140,6 +154,7 @@
 
 		});
     	businessTrip_table.fnSetColumnVis(0, false);
+    	businessTrip_table.fnSetColumnVis(1, false);//crtd id
     	//$('div#businessTrip_table_wrapper div.dataTables_filter').append('<button class="btn btn-w-m btn-primary m-r-sm" type="button" data-toggle="modal"  data-keyboard="false" data-backdrop="static" data-target="#modal_businessTrip" style="margin-bottom: 0px;"> Add </button>');
 
     	$('.search-daterange').datepicker({
@@ -201,7 +216,9 @@
     		 clickRow = businessTrip_table.fnGetPosition(this);
     		if( clickRow != null){
     			var rowData = businessTrip_table.fnGetData(this); // 선택한 데이터 가져오기
-        		if(editPossibleCheck(rowData[1])){
+    			if(rowData[1] != '${info.id}') return; //자신의 Id가 이니면 Exit
+    			
+        		if(editPossibleCheck(rowData[2])){
         			$("#btnDelete").show();
         		}
        			$('#businessTripForm .trap').attr("disabled",true);
@@ -213,17 +230,17 @@
     				type : 'POST',
     				dataType : 'json',
     				success : function(data){
-    					$('#businessTripForm #id').val(data.id);
-    					$('#businessTripForm #tripRange').val(data.tripRange);
-    					$('#startDt').val(data.startDt);
-    					$('#endDt').val(data.endDt);
-
-    					$('#businessTripForm #destination').val(data.destination);
-    					$('#businessTripForm #memo').val(data.memo);
-
+	    					$('#businessTripForm #id').val(data.id);
+	    					$('#businessTripForm #tripRange').val(data.tripRange);
+	    					$('#startDt').val(data.startDt);
+	    					$('#endDt').val(data.endDt);
+	
+	    					$('#businessTripForm #destination').val(data.destination);
+	    					$('#businessTripForm #memo').val(data.memo);
+	    					$('#modal_businessTrip').modal('show');
     				}
     			});
-    			$('#modal_businessTrip').modal('show');
+    			
 
     		}
     	});
@@ -251,9 +268,10 @@
    		        complete: function () {
    		        },
    				success: function(data){
-   					fnClickAddRow(data);
-   					businessTrip_table.fnDraw();
+   					//fnClickAddRow(data);
+   					//businessTrip_table.fnDraw();
    					businessTripFormReset();
+   					businessTripList();
    				}
    			});
     	}
@@ -300,8 +318,9 @@
 	   		        },
 	   				success: function(data){
 	   					if(data==1){
-		   					businessTrip_table.fnDeleteRow(clickRow);
+		   					//businessTrip_table.fnDeleteRow(clickRow);
 		   					businessTripFormReset();
+		   					businessTripList();
 	   					}else{
 	   						alert("삭제 오류 발생.");
 	   					}
@@ -318,7 +337,36 @@
 
           }
     	});
+    	
+    	searchDeptUser();
+    	$("#searchDept").change(function(){
+    		searchDeptUser('deptChange');
+    	})
+    	
+    	$('#searchUser').change(function(){
+    		businessTripList();
+    	})
     });
+    
+    function searchDeptUser(type){
+    	$.ajax({
+			url : "<c:url value='/management/getDeptUserAjax'/>",
+			data : {searchDept : $('#searchDept').val()},
+			type : 'POST',
+			dataType : 'json',
+			success : function(data){
+				$('#searchUser option').remove();
+				$('#searchUser').append('<option value="all">전체</option>');
+				for(var i=0; i<data.length;i++){
+					$('#searchUser').append('<option value="'+data[i].id+'">'+data[i].capsName+'('+data[i].deptName+')</option>');
+				}
+				
+				if(type == 'deptChange'){
+					businessTripList();
+				}
+			}
+		});
+    }
 
       function businessTripList(){
        	$.ajax({
@@ -354,13 +402,13 @@
 
     function fnClickAddRow(data){
     	var a = businessTrip_table.fnAddData( [
-					data.id, data.startDt,data.endDt, data.destination,data.crtdId,data.crtdDt,data.mdfyId,data.mdfyDt
+					data.id,data.crtdId, data.startDt,data.endDt, data.destination,data.crtdNm,data.crtdDt,data.mdfyId,data.mdfyDt
 				], false);
 
     }
     function fnClickUpdateRow(data){
     	businessTrip_table.fnUpdate( [
-					data.id, data.startDt,data.endDt, data.destination,data.crtdId,data.crtdDt,data.mdfyId,data.mdfyDt
+					data.id,data.crtdId, data.startDt,data.endDt, data.destination,data.crtdNm,data.crtdDt,data.mdfyId,data.mdfyDt
 				], clickRow);
     }
     function businessTripFormReset(){

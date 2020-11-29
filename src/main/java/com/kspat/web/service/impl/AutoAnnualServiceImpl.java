@@ -1,6 +1,7 @@
 package com.kspat.web.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -8,29 +9,44 @@ import org.joda.time.Days;
 import org.joda.time.Months;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.kspat.util.AutoAnnualUtil;
 import com.kspat.web.domain.AutoAnnual;
 import com.kspat.web.domain.ComPenAnnual;
+import com.kspat.web.domain.Score;
 import com.kspat.web.domain.SearchParam;
 import com.kspat.web.mapper.AutoAnnualMapper;
 import com.kspat.web.service.AutoAnnualService;
+import com.kspat.web.service.EmailTempleatService;
+import com.kspat.web.service.StatService;
 
 @Service
 public class AutoAnnualServiceImpl implements AutoAnnualService {
 	private static DateTimeFormatter fmt = org.joda.time.format.DateTimeFormat.forPattern("yyyy-MM-dd");
 	private static DateTimeFormatter fmt_yyyy = org.joda.time.format.DateTimeFormat.forPattern("yyyy");
-	private static DateTimeFormatter fmt_MM_dd = org.joda.time.format.DateTimeFormat.forPattern("MM-dd");
+
+	@Value("#{checkDay}")
+	String[] CHECK_DAY;
 
 	@Autowired
 	private AutoAnnualMapper autoAnnualMapper;
+
+	@Autowired
+	private StatService statService;
+
+	@Autowired
+	private EmailTempleatService emailTempleatService;
 
 	@Override
 	public List<AutoAnnual> manualCreateAutoAnnual(SearchParam searchParam) {
 
 		List<AutoAnnual> list = autoAnnualMapper.getUserHeirDtList(searchParam);
 		List<AutoAnnual> newList = new ArrayList<AutoAnnual>();
+		//기존연차정보 삭제
+		autoAnnualMapper.deleteAllAutoAnnual();
+
 		//연차 update
 		if(list !=null){
 			for(AutoAnnual aa : list){
@@ -39,7 +55,7 @@ public class AutoAnnualServiceImpl implements AutoAnnualService {
 				na.setMdfyId(searchParam.getCrtdId());
 				newList.add(na);
 				//System.out.println(na.toString());
-				autoAnnualMapper.deleteNowAnnual(na);
+				//autoAnnualMapper.deleteNowAnnual(na);
 				autoAnnualMapper.upsertAutoAnnual(na);
 				//System.out.println(aa.toString());
 			}
@@ -71,7 +87,18 @@ public class AutoAnnualServiceImpl implements AutoAnnualService {
 		int year = AutoAnnualUtil.getYear(String.valueOf(hireYear),String.valueOf(currYear));
 		double [] BDAnnualArray = {0,0,15,15,16,16,17,17,18,18,19,19,20,20,21,21,22,22,23,23,24,24,25,25};
 
-		if("before".equals(aa.getApplyDtType())){
+		/**
+		 * 2018.06.02 연차계산로직이 기준일(applyDtType)을 기준으로 분기가되었는데,
+		 * 모두 기준일이 후 'after'로직으로 계산. (서버의 기준일은  1999-12-31로 변경 : 최초입사자보다 빠른날)
+		 *
+		 * 법의개정으로 2년차(AB)직원의 전년도 사용연차 차감로직은 삭제.
+		 *
+		 * 2018.06.15 기준일 2018.01.01로 변경 before로직사용함.
+		 *
+		 */
+
+
+		if("before".equals(aa.getApplyDtType())){//과거로직 사용안함.
 //			System.out.println("before");
 //			System.out.println("만 나이  계산(realYear):"+ realYear);
 //			System.out.println("한국나이 계산(year):"+ year);
@@ -84,9 +111,9 @@ public class AutoAnnualServiceImpl implements AutoAnnualService {
 				DateTime yearLastDay = DateTime.parse(hireYear+"-12-31", fmt);
 				int  termDay = Days.daysBetween(hireDt, yearLastDay).getDays();
 //				System.out.println("termDay: "+ termDay);
-				double annual = ((double)termDay*15)/365;
+				double annual = ((double)termDay*15.0)/365.0;
 //				System.out.println("년차 d: "+ annual);
-				double annual2 = Math.floor(annual);
+				double annual2 = Math.ceil(annual);
 				autoAnnual = (int) annual2;
 				startDt = hireDt.toString(fmt);
 				endDt = yearLastDay.toString(fmt);;
@@ -136,11 +163,16 @@ public class AutoAnnualServiceImpl implements AutoAnnualService {
 				//System.out.println("		"+currDt.toString(fmt)+"		"+realYear+"		"+year+"		"+type+"		"+availAnnual+"		"+term);
 
 			}else if(realYear < 2){
+				/**
+				 * 2018.06.02 법이 바뀌어 전년도 사용연차 마이너스 로직 삭제.
+				 * 무조건 연차 15개 부여
+				 */
 				type = "AB";
-				double usedAnnual = getTypeAAUsedAnnual(aa);
+				//double usedAnnual = getTypeAAUsedAnnual(aa);
 				//System.out.println("usedAnnual:"+usedAnnual);
 
-				autoAnnual = 15-usedAnnual;
+				//autoAnnual = 15-usedAnnual;
+				autoAnnual = 15;
 				startDt = hireDt.plusMonths(12).toString(fmt);
 				endDt = hireDt.plusMonths(24).minusDays(1).toString(fmt);
 				term = startDt +" ~ "+ endDt;
@@ -151,20 +183,23 @@ public class AutoAnnualServiceImpl implements AutoAnnualService {
 				//System.out.println("		"+currDt.toString(fmt)+"		"+realYear+"		"+year+"		"+type+"		"+availAnnual+"		"+term);
 
 			}else{
-				String hierDt_MM_DD = hireDt.toString(fmt_MM_dd);
-				boolean dtCheck = "01-01".equals(hierDt_MM_DD);//만 2년을 딱 채웠나?
+//				String hierDt_MM_DD = hireDt.toString(fmt_MM_dd);
+//				boolean dtCheck = "01-01".equals(hierDt_MM_DD);//만 2년을 딱 채웠나?
 
-				if(year == 3 && dtCheck == false){
+				//if(year == 3 && dtCheck == false){
+				if(year == 3){
 					type = "AC";
 					String tempYear = hireDt.plusYears(2).toString(fmt_yyyy);
 					//System.out.println(hireDt.plusYears(2).toString(fmt));
 					//System.out.println(DateTime.parse(tempYear+"-12-31", fmt).toString(fmt));
 					DateTime yearLastDay = DateTime.parse(tempYear+"-12-31", fmt);
 					int  termDay = Days.daysBetween(hireDt.plusYears(2), yearLastDay).getDays();
-					//System.out.println("termDay: "+ termDay);
-					double annual = (termDay*15)/365;
-					//System.out.println("년차 d: "+ annual);
-					autoAnnual = Math.floor(annual);
+//					System.out.println("id: "+ aa.getId());
+//					System.out.println("termDay: "+ termDay);
+					double annual = (termDay*15.0)/365.0;
+//					System.out.println("년차 d: "+ annual);
+					autoAnnual = Math.ceil(annual);//올림으로 변경[2018.06.04]
+//					System.out.println("년차 d 올림: "+ autoAnnual);
 					startDt = hireDt.plusMonths(24).toString(fmt);
 					endDt = yearLastDay.toString(fmt);;
 					term = startDt +" ~ "+ endDt;
@@ -206,6 +241,14 @@ public class AutoAnnualServiceImpl implements AutoAnnualService {
 		availAnnual = autoAnnual+aa.getComAnnual();
 
 		aa.setAvailCount(availAnnual);
+
+//		if(aa.getId() == 43 || aa.getId() == 59 || aa.getId() == 68) {
+//			System.out.println("====>id:"+aa.getId());
+//			System.out.println("====>realYear:"+realYear);
+//			System.out.println("====>year:"+year);
+//			System.out.println("====>aa:"+aa.toString());
+//
+//		}
 		return aa;
 
 	}
@@ -257,6 +300,35 @@ public class AutoAnnualServiceImpl implements AutoAnnualService {
 
 
 		return autoAnnualMapper.getUserAutoAnnualDetail(searchParam);
+	}
+
+	@Override
+	public void sendRemainingAnnualMail(SearchParam searchParam) {
+		String today = searchParam.getSearchDate();
+		boolean send = false;
+
+		/* 연차확인 메일은 서버 처음 적용하는 2020-02-18일 테스트로 전직원 한번 발송
+		 * 나머지는 목록에 있는 날짜만 발송
+		 */
+		if("2020-02-18".equals(today)) {// 최초 테스트용
+			send = true;
+		}else { // 이후 적용 로직
+			send = Arrays.asList(CHECK_DAY).contains(today.substring(5));
+		}
+
+		if(send) {
+			List<Score> slist = statService.getAnnualEmailSendScoreList(searchParam);
+			//메일 발송 성공 개발자 확인용 추가
+			slist.add(new Score(0,"개발자","관리팀","2020-02-18","2020-02-18","bbaga93@daum.net",10.0));
+
+			for(Score s : slist) {
+				//System.out.println(s.toString());
+				//logger.debug("아이디 {} : {} 님은 {}/{} {}~{} 사용가능연차:{} 입니다.",s.getId(),s.getCapsName(),s.getDeptName(),s.getEmail(),s.getStartDt(),s.getEndDt(),s.getCurrCount());
+				emailTempleatService.setRemainingAnnualEmailTempleate(s);
+			}
+
+		}
+
 	}
 
 

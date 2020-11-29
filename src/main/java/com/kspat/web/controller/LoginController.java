@@ -1,8 +1,6 @@
 package com.kspat.web.controller;
 
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,8 +18,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.kspat.util.common.SessionUtil;
 import com.kspat.web.domain.LoginInfo;
-import com.kspat.web.domain.RawData;
-import com.kspat.web.domain.SearchParam;
 import com.kspat.web.domain.SessionInfo;
 import com.kspat.web.domain.User;
 import com.kspat.web.service.LoginService;
@@ -63,7 +59,7 @@ public class LoginController {
 //    		logger.debug("===============>session info (authName):"+session.getAttribute("authName"));
 
     		SessionInfo info =SessionUtil.getSessionInfo(request);
-    		logger.debug(info.toString());
+//    		logger.debug(info.toString());
 
 		}
 

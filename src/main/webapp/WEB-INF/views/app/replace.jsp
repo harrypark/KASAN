@@ -5,7 +5,7 @@
 <!-- title start -->
 <div class="row wrapper border-bottom white-bg">
     <div class="col-lg-9">
-        <h2></h2>
+        <h2>대체근무</h2>
     </div>
 </div>
 <!-- title end -->
@@ -30,6 +30,19 @@
 					    <input type="text" class="form-control trap" id="toDate" name="toDate" readonly="readonly">
 					</div>
                 </div>
+                <div class="col-lg-2 col-md-6 col-sm-12">
+                	 <select class="form-control chosen" id="searchDept" name="searchDept">
+                        <option value="all">부서_전체</option>
+                        <c:forEach items="${deptList}" var="list">
+                        	<option value="${list.code }">${list.name }</option>
+                        </c:forEach>
+                    </select>
+                </div>
+                <div class="col-lg-2 col-md-6 col-sm-12">
+                    <select class="form-control chosen" id="searchUser" name="searchUser">
+                        <option value="all">전체</option>
+                    </select>
+                </div>
                 <div class="col-lg-3 col-md-6 col-sm-6">
 <!--                 	<button class="btn btn-w-m btn-primary m-r-sm" data-toggle="modal"  data-keyboard="false" data-backdrop="static" type="button"  data-target="#modal_replace"  data-keyboard="false" data-backdrop="static"> Add </button> -->
                 	<button class="btn btn-w-m btn-primary m-r-sm" id="addModal" data-keyboard="false" data-backdrop="static" type="button"  data-keyboard="false" data-backdrop="static"> Add </button>
@@ -44,6 +57,7 @@
 			        <thead>
 			        <tr>
 			            <th>ID</th>
+			            <th>등록자ID</th>
 			            <th>빠지는날</th>
 			            <th>시작시간</th>
 			            <th>종료시간</th>
@@ -81,6 +95,9 @@
 	        	<div class="form-group rep-info"><label class="col-sm-3 control-label"></label>
 	                <div class="col-sm-9"><label class="control-label text-info">이달 남은 대체근무 신청가능 일수 : <span id="availReplaceCount"></span>회</label></div>
 	            </div>
+	            <div class="form-group rep-info hl-info"><label class="col-sm-3 control-label"></label>
+	                <div class="col-sm-9"><label class="control-label text-danger"> <span id="replDtInfo"></span> 에는 반휴가 신청되어 있습니다. 다른날을 선택하세요.</label></div>
+	            </div>
 	        	<div class="form-group"><label class="col-sm-3 control-label">빠지는날 <i class="fa fa-check-circle-o text-danger"></i></label>
 	                <div class="col-sm-9"><input type="text" name="replDt" id="replDt" class="form-control rep" readonly="readonly"></div>
 	            </div>
@@ -111,7 +128,7 @@
 	        <div class="modal-footer">
 	        	<a class="btn btn-danger pull-left" id="btnDelete" style="display: none;">Delete</a>
 	            <a class="btn btn-white" id="btnCancel">Cancel</a>
-	            <a class="btn btn-primary registBt" id="btnAdd">Save</a>
+	            <a class="btn btn-primary registBt " id="btnAdd">Save</a>
 	        </div>
 			</form>
 	    </div>
@@ -164,6 +181,7 @@ var availReplaceMin;
 
 			});
 	   	replace_table.fnSetColumnVis(0, false);//index hide
+	   	replace_table.fnSetColumnVis(1, false);//crtd id
 	  	//$('div#replace_table_wrapper div.dataTables_filter').append('<button class="btn btn-w-m btn-primary m-r-sm" data-toggle="modal"  data-keyboard="false" data-backdrop="static" type="button"  data-target="#modal_replace"  data-keyboard="false" data-backdrop="static"> Add </button>');
 
 	   	$('.search-daterange').datepicker({
@@ -182,19 +200,24 @@ var availReplaceMin;
        	$('#fromDate').datepicker('setDate', moment().subtract(15, 'days').format('YYYY-MM-DD'));
     	$('#toDate').datepicker('setDate', moment().add(15, 'days').format('YYYY-MM-DD'));
 
-	  	replaceFormReset();
+	  	
 	  	getReplace();
 
+	  	
+	  	$('#suppleDt').datepicker({
+    		startDate: 'today',
+    		endDate :  new moment().add(30,'days').format("YYYY-MM-DD")
+        });
+	  	
 	  	$('#replDt').datepicker({
     		startDate: 'today',
+    		endDate :  new moment().add(30,'days').format("YYYY-MM-DD")
         }).on('hide', function(e) {
         	checkAvailableReplaceInfo();
         });
 
-
-        $('#suppleDt').datepicker({
-    		startDate: 'today',
-        });
+	  	replaceFormReset();
+        
 
         $('#replDt, #suppleDt').datepicker().on('hide', function(e) {
         	$(this).blur();
@@ -255,18 +278,18 @@ var availReplaceMin;
 			}
 			//최대시간인지
 			var term = replEndTm.diff(replStartTm, 'minutes');
-			console.log('원래:'+term);
+			//console.log('원래:'+term);
 			if(replStartTm.isBefore(lunchStart) && replEndTm.isAfter(lunchEnd)){
 				term = (term - 60 < 0?0:term - 60);
 				//점심포함
 				$('#inLunch').val('Y');
-				console.log('차감1:'+term);
+				//console.log('차감1:'+term);
 			}
 			if($('#replEndTm').val()=='13:00'){
 				term = (term - 60 < 0?0:term - 60);
 				//점심포함
 				$('#inLunch').val('Y');
-				console.log('차감2:'+term);
+				//console.log('차감2:'+term);
 			}
 
 			if(term > availReplaceMin){
@@ -313,16 +336,18 @@ var availReplaceMin;
 		 clickRow = replace_table.fnGetPosition(this);
 		if( clickRow != null){
 			var rowData = replace_table.fnGetData(this); // 선택한 데이터 가져오기
+			if(rowData[1] != '${info.id}') return; //자신의 Id가 이니면 Exit
+			
 			$('#replaceForm .rep, #replaceForm .su_rep').attr("disabled",true);
 			$("#btnAdd").hide();
 			//console.log(rowData[0]);
 			//삭제가능체크 - 빠지는날이 지났는가?
-			if(deletePossibleCheck(rowData[1]) && deletePossibleCheck(rowData[4])){
+			if(deletePossibleCheck(rowData[2]) && deletePossibleCheck(rowData[5])){
    				$("#btnDelete").show();
    			}
 
 			//수정가능체크 - 채우는날이 지났는가?
-			if(editPossibleCheck(rowData[4])){
+			if(editPossibleCheck(rowData[5])){
 	   			$('#replaceForm .su_rep').attr("disabled",false);
 	   			$("#btnAdd").removeClass('registBt').addClass('modifyBt').show();
    			}
@@ -335,21 +360,24 @@ var availReplaceMin;
 				type : 'POST',
 				dataType : 'json',
 				success : function(data){
-					$('#replaceForm #id').val(data.id);
-					$('#replaceForm #replDt').val(data.replDt);
-
-					$('#replaceForm #replStartTm').val(data.replStartTm);
-					$('#replaceForm #replEndTm').val(data.replEndTm);
-					$('#replaceForm #suppleDt').val(data.suppleDt);
-					$('#suppleDt').datepicker('setStartDate', editSupplyStartDt(data.replDt,data.suppleDt));
-
-					$('#replaceForm #memo').val(data.memo);
-					$('#replaceForm #id').val(data.id);
-					$('#deleteForm #id').val(data.id);
-
+						$('#replaceForm #id').val(data.id);
+						$('#replaceForm #replDt').val(data.replDt);
+	
+						$('#replaceForm #replStartTm').val(data.replStartTm);
+						$('#replaceForm #replEndTm').val(data.replEndTm);
+						$('#replaceForm #suppleDt').val(data.suppleDt);
+						//수정시 등록일 기준으로 30일 동안만 수정가능 [20180626]
+						//$('#suppleDt').datepicker('setStartDate', editSupplyStartDt(data.replDt,data.suppleDt));
+						$('#suppleDt').datepicker('setStartDate', moment(data.crtdDt).format('YYYY-MM-DD'));
+						$('#suppleDt').datepicker('setEndDate', moment(data.crtdDt).add(30, 'days').format('YYYY-MM-DD'));
+	
+						$('#replaceForm #memo').val(data.memo);
+						$('#replaceForm #id').val(data.id);
+						$('#deleteForm #id').val(data.id);
+						$('#modal_replace').modal('show');
 				}
 			});
-			$('#modal_replace').modal('show');
+			
 
 		}
 	});
@@ -372,7 +400,8 @@ var availReplaceMin;
 			        },
 					success: function(data){
 						if(data==1){
-	  					replace_table.fnDeleteRow(clickRow);
+	  					//replace_table.fnDeleteRow(clickRow);
+	  					getReplace();
 	  					replaceFormReset();
 						}else{
 							alert("삭제 오류 발생.");
@@ -382,6 +411,36 @@ var availReplaceMin;
 		}
 	});
 
+	searchDeptUser();
+	$("#searchDept").change(function(){
+		searchDeptUser('deptChange');
+	})
+	
+	$('#searchUser').change(function(){
+		getReplace();
+	})
+
+});
+   function searchDeptUser(type){
+   	$.ajax({
+			url : "<c:url value='/management/getDeptUserAjax'/>",
+			data : {searchDept : $('#searchDept').val()},
+			type : 'POST',
+			dataType : 'json',
+			success : function(data){
+				$('#searchUser option').remove();
+				$('#searchUser').append('<option value="all">전체</option>');
+				for(var i=0; i<data.length;i++){
+					$('#searchUser').append('<option value="'+data[i].id+'">'+data[i].capsName+'('+data[i].deptName+')</option>');
+				}
+				
+				if(type == 'deptChange'){
+					getReplace();
+				}
+			}
+		});
+   }
+   
 	function checkAvailableReplaceInfo(){
 		 $.ajax({
 				url : "<c:url value='/app/checkAvailableReplaceInfoAjax'/>",
@@ -389,6 +448,7 @@ var availReplaceMin;
 				type : 'POST',
 				dataType : 'json',
 				success : function(data){
+					
 					availReplaceCount = data.currCount;
 					$('#modal_replace #availReplaceCount').text(availReplaceCount);
 					availReplaceMin = data.todayMin;
@@ -406,6 +466,16 @@ var availReplaceMin;
 						$('#modal_replace #replStartTm').attr("readonly",false);
 					}
 					$('#modal_replace #replEndTm').val(moment(availStartTm).add(1,'hours').format('HH:mm'));
+					
+					if(data.hasHl == 'yes'){
+						$('.hl-info').show();
+						$('#replDtInfo').text($('#replDt').val());
+						$('#btnAdd').addClass('disabled');
+					}else{
+						$('.hl-info').hide();
+						$('#replDtInfo').text('');
+						$('#btnAdd').removeClass('disabled');
+					}
 
 
 				}
@@ -440,8 +510,9 @@ var availReplaceMin;
 				}
 				*/
 
-				fnClickAddRow(data);
-				replace_table.fnDraw();
+				//fnClickAddRow(data);
+				//replace_table.fnDraw();
+				getReplace();
 				replaceFormReset();
 				}
 			});
@@ -457,8 +528,9 @@ var availReplaceMin;
 	        complete: function () {
 	        },
 			success: function(data){
-				fnClickUpdateRow(data);
-				replace_table.fnDraw();
+				//fnClickUpdateRow(data);
+				//replace_table.fnDraw();
+				getReplace();
 				replaceFormReset();
 				}
 			});
@@ -488,18 +560,16 @@ var availReplaceMin;
 
 	function fnClickAddRow(data){
 		replace_table.fnAddData( [
-					data.id,data.replDt, data.replStartTm,data.replEndTm, data.suppleDt, data.crtdId, data.crtdDt,data.mdfyId, data.mdfyDt
+					data.id,data.crtdId,data.replDt, data.replStartTm,data.replEndTm, data.suppleDt, data.crtdNm, data.crtdDt,data.mdfyId, data.mdfyDt
 				], false);
 
 	}
 	function fnClickUpdateRow(data){
 		replace_table.fnUpdate( [
-					data.id,data.replDt, data.replStartTm,data.replEndTm, data.suppleDt, data.crtdId, data.crtdDt,data.mdfyId, data.mdfyDt
+					data.id,data.crtdId,data.replDt, data.replStartTm,data.replEndTm, data.suppleDt, data.crtdNm, data.crtdDt,data.mdfyId, data.mdfyDt
 				], clickRow);
 	}
 
-
-});
 
 	function replaceFormReset(){
 		$('#replaceForm .rep,#replaceForm .su_rep').attr("disabled",false);

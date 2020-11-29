@@ -23,27 +23,14 @@
        	 <div class="row well">
 	       	  <form id="searchParam" name="searchParam">
 	       	  <div class="form-group">
-                <div class="col-lg-2 col-md-6 col-sm-12">
+                <div class="col-lg-3 col-md-6 col-sm-6">
                 	<div class="input-group input-daterange search-daterange">
 					    <input type="text" class="form-control trap" id="fromDate" name="fromDate" readonly="readonly"/>
 					    <span class="input-group-addon">to</span>
 					    <input type="text" class="form-control trap" id="toDate" name="toDate" readonly="readonly">
 					</div>
                 </div>
-                 <div class="col-lg-2 col-md-6 col-sm-12">
-                	 <select class="form-control chosen" id="searchDept" name="searchDept">
-                        <option value="all">부서_전체</option>
-                        <c:forEach items="${deptList}" var="list">
-                        	<option value="${list.code }">${list.name }</option>
-                        </c:forEach>
-                    </select>
-                </div>
-                <div class="col-lg-2 col-md-6 col-sm-12">
-                    <select class="form-control chosen" id="searchUser" name="searchUser">
-                        <option value="all">전체</option>
-                    </select>
-                </div>
-                <div class="col-lg-2 col-md-6 col-sm-12">
+                <div class="col-lg-3 col-md-6 col-sm-6">
 					<button class="btn btn-w-m btn-primary m-r-sm" type="button" data-toggle="modal"  data-keyboard="false" data-backdrop="static" data-target="#modal_workout" style="margin-bottom: 0px;"> Add </button>
                 </div>
               </div>
@@ -57,7 +44,6 @@
 			        <thead>
 			        <tr>
 			        	<th>ID</th>
-			        	<th>등록자ID</th>
 			            <th>신청일</th>
 			            <th>요일</th>
 			            <th>시작시간</th>
@@ -171,7 +157,6 @@
 
 		});
     	workout_table.fnSetColumnVis(0, false);
-    	workout_table.fnSetColumnVis(1, false); //crtd_id
 
     	//$('div#workout_table_wrapper div.dataTables_filter').append('<button class="btn btn-w-m btn-primary m-r-sm" type="button" data-toggle="modal"  data-keyboard="false" data-backdrop="static" data-target="#modal_workout" style="margin-bottom: 0px;"> Add </button>');
     	$('.search-daterange').datepicker({
@@ -219,12 +204,10 @@
     		workoutFormReset();
     	});
     	$('div.wrapper-content').on('click','table#workout_table tbody tr',function(){
-    		clickRow = workout_table.fnGetPosition(this);
+    		 clickRow = workout_table.fnGetPosition(this);
     		if( clickRow != null){
     			var rowData = workout_table.fnGetData(this); // 선택한 데이터 가져오기
-    			if(rowData[1] != '${info.id}') return; //자신의 Id가 이니면 Exit
-    			
-    			if(editPossibleCheck(rowData[2])){
+    			if(editPossibleCheck(rowData[1])){
         			$('#modal_workout .modal-title').text('외근정보 수정');
         			$("#btnSave").removeClass('registBt').addClass('modifyBt').show();
         			$("#btnDelete").show();
@@ -241,18 +224,18 @@
     				type : 'POST',
     				dataType : 'json',
     				success : function(data){
-	    					$('#workoutForm #id').val(data.id);
-	    					$('#workoutForm #outDt').val(data.outDt);
-	    					$('#workoutForm #startTm').val(data.startTm);
-	    					$('#workoutForm #endTm').val(data.endTm);
-	    					$("#workoutForm #hereGoYn").prop('checked', data.hereGoYn=='Y'?true:false) ;
-	    					$("#workoutForm #hereOutYn").prop('checked', data.hereOutYn=='Y'?true:false) ;
-	    					$('#workoutForm #destination').val(data.destination);
-	    					$('#workoutForm #memo').val(data.memo);
-	    					$('#modal_workout').modal('show');
+    					$('#workoutForm #id').val(data.id);
+    					$('#workoutForm #outDt').val(data.outDt);
+    					$('#workoutForm #startTm').val(data.startTm);
+    					$('#workoutForm #endTm').val(data.endTm);
+    					$("#workoutForm #hereGoYn").prop('checked', data.hereGoYn=='Y'?true:false) ;
+    					$("#workoutForm #hereOutYn").prop('checked', data.hereOutYn=='Y'?true:false) ;
+    					$('#workoutForm #destination').val(data.destination);
+    					$('#workoutForm #memo').val(data.memo);
+
     				}
     			});
-    			
+    			$('#modal_workout').modal('show');
 
     		}
     	});
@@ -295,10 +278,9 @@
    		        complete: function () {
    		        },
    				success: function(data){
-   					//fnClickAddRow(data);
-   					//workout_table.fnDraw();
+   					fnClickAddRow(data);
+   					workout_table.fnDraw();
    					workoutFormReset();
-   					workoutList();
    				}
    			});
     	}
@@ -318,8 +300,7 @@
    		        complete: function () {
    		        },
    				success: function(data){
-   					//fnClickUpdateRow(data);
-   					workoutList();
+   					fnClickUpdateRow(data);
    					workoutFormReset();
    				}
    			});
@@ -343,8 +324,7 @@
        		        },
        				success: function(data){
        					if(data==1){
-    	   					//workout_table.fnDeleteRow(clickRow);
-    	   					workoutList();
+    	   					workout_table.fnDeleteRow(clickRow);
     	   					workoutFormReset();
        					}else{
        						alert("삭제 오류 발생.");
@@ -363,40 +343,7 @@
 
           }
     	});
-    	
-    	searchDeptUser();
-    	$("#searchDept").change(function(){
-    		searchDeptUser('deptChange');
-    	})
-    	
-    	$('#searchUser').change(function(){
-    		workoutList();
-    	})
-    	
-    	
-    	
-    	
     });
-    
-    function searchDeptUser(type){
-    	$.ajax({
-			url : "<c:url value='/management/getDeptUserAjax'/>",
-			data : {searchDept : $('#searchDept').val()},
-			type : 'POST',
-			dataType : 'json',
-			success : function(data){
-				$('#searchUser option').remove();
-				$('#searchUser').append('<option value="all">전체</option>');
-				for(var i=0; i<data.length;i++){
-					$('#searchUser').append('<option value="'+data[i].id+'">'+data[i].capsName+'('+data[i].deptName+')</option>');
-				}
-				
-				if(type == 'deptChange'){
-					workoutList();
-				}
-			}
-		});
-    }
 
       function workoutList(){
        	$.ajax({
@@ -432,13 +379,13 @@
 
     function fnClickAddRow(data){
     	var a = workout_table.fnAddData( [
-					data.id,data.crtdId, data.outDt,data.weekName, data.startTm, data.endTm, data.hereGoYn,data.hereOutYn,data.destination,data.crtdNm,data.crtdDt,data.mdfyId,data.mdfyDt
+					data.id, data.outDt,data.weekName, data.startTm, data.endTm, data.hereGoYn,data.hereOutYn,data.destination,data.crtdId,data.crtdDt,data.mdfyId,data.mdfyDt
 				], false);
 
     }
     function fnClickUpdateRow(data){
     	workout_table.fnUpdate( [
-					data.id,data.crtdId, data.outDt,data.weekName, data.startTm, data.endTm, data.hereGoYn,data.hereOutYn,data.destination,data.crtdNm,data.crtdDt,data.mdfyId,data.mdfyDt
+					data.id, data.outDt,data.weekName, data.startTm, data.endTm, data.hereGoYn,data.hereOutYn,data.destination,data.crtdId,data.crtdDt,data.mdfyId,data.mdfyDt
 				], clickRow);
     }
     function workoutFormReset(){

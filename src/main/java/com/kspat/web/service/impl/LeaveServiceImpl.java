@@ -43,8 +43,14 @@ public class LeaveServiceImpl implements LeaveService {
 		List<Calendar> days = leaveMapper.checkLeaveDay(leave);
 		if(days !=null && days.size()>0){
 			for(Calendar cal: days){
+				if("Y".equals(cal.getCalHolidayYn()) || "Y".equals(cal.getCalWeekendYn())) {
+					leave.setTerm(0.0);
+				}else {
+					leave.setTerm(1.0);
+				}
+			
 			leave.setLeDt(cal.getCalDate1());
-			leave.setTerm(1.0);
+			
 			//등록
 			leaveMapper.insertLeave(leave);
 			SearchParam searchParam = new SearchParam(leave.getId());

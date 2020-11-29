@@ -13,6 +13,8 @@ import ch.qos.logback.classic.Logger;
 import com.kspat.util.common.DailyStatUtil;
 import com.kspat.util.common.DateTimeUtil;
 import com.kspat.web.domain.DailyRule;
+import com.kspat.web.domain.DashCalendar;
+import com.kspat.web.domain.DashPrivate;
 import com.kspat.web.domain.DayEvent;
 import com.kspat.web.domain.DayInfo;
 import com.kspat.web.domain.Replace;
@@ -73,6 +75,18 @@ public class DashboardServiceImpl implements DashboardService {
 	@Override
 	public List<DayEvent> getAllUserEventList(SearchParam searchParam) {
 		return dashboardMapper.getAllUserEventList(searchParam);
+	}
+
+
+	@Override
+	public List<DashCalendar> getCalendarList(SearchParam searchParam) {
+		return dashboardMapper.getCalendarList(searchParam);
+	}
+
+
+	@Override
+	public List<DashPrivate> getPrivateList(SearchParam searchParam) {
+		return dashboardMapper.getPrivateList(searchParam);
 	}
 
 }

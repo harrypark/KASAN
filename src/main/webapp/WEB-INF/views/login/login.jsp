@@ -78,6 +78,10 @@
 	   	    },
 	  		submitHandler: function(form) {
 				//console.log('submit');
+// 				if($('#loginId').val() != 'admin'){
+// 					alert('작업중. 관리자만 로그인 가능 합니다.');
+// 					return;
+// 				}
 				$.ajax({
 					url: "<c:url value='/loginCheckAjax'/>",
 					data: $("#loginForm").serialize(),

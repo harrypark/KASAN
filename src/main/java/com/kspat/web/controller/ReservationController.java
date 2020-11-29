@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.kspat.util.common.SessionUtil;
-import com.kspat.web.domain.BusinessTrip;
 import com.kspat.web.domain.CodeData;
 import com.kspat.web.domain.CodeGroup;
 import com.kspat.web.domain.Reservation;

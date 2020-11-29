@@ -32,4 +32,6 @@ public interface ReplaceMapper {
 
 	int getReplDtRegDtCount(SearchParam param);
 
+	String hasSelectDayReplace(SearchParam searchParam);
+
 }

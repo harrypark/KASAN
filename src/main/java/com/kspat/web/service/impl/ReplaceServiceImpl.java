@@ -116,4 +116,9 @@ public class ReplaceServiceImpl implements ReplaceService{
 		return replaceMapper.checkAvailableReplaceInfo(param);
 	}
 
+	@Override
+	public String hasSelectDayReplace(SearchParam searchParam) {
+		return replaceMapper.hasSelectDayReplace(searchParam);
+	}
+
 }

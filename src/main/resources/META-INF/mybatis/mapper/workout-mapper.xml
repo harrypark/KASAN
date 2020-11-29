@@ -25,32 +25,40 @@
 			,isnull(here_out_yn,'N') as here_out_yn
 			,destination
 			,memo
-			,(select caps_name from ks_user where id=kw.crtd_id) as crtd_id
+			,crtd_id
 			,crtd_dt
-			,(select caps_name from ks_user where id=kw.mdfy_id) as mdfy_id
+			,mdfy_id
 			,mdfy_dt
 		from ks_workout kw
 		where id=#{searchId}
 	</select>
 
 	<select id="getUserWorkoutList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.Workout">
-		select id
-			,convert(varchar(10),out_dt,120) as out_dt
-			,week_name
-			,convert(varchar(5),start_tm,114) as start_tm
-			,convert(varchar(5),end_tm,114) as end_tm
-			,diffm
-			,isnull(here_go_yn,'N') as here_go_yn
-			,isnull(here_out_yn,'N') as here_out_yn
-			,destination
-			,memo
-			,(select caps_name from ks_user where id=kw.crtd_id) as crtd_id
-			,crtd_dt
-			,(select caps_name from ks_user where id=kw.mdfy_id) as mdfy_id
-			,mdfy_dt
-		from ks_workout kw
-		where crtd_id=#{crtdId}
-		and out_dt  between #{fromDate} and #{toDate}
+		select kw.id
+	,convert(varchar(10),out_dt,120) as out_dt
+	,week_name
+	,convert(varchar(5),start_tm,114) as start_tm
+	,convert(varchar(5),end_tm,114) as end_tm
+	,diffm
+	,isnull(here_go_yn,'N') as here_go_yn
+	,isnull(here_out_yn,'N') as here_out_yn
+	,destination
+	,memo
+	,(select caps_name from ks_user where id=kw.crtd_id) as crtd_nm
+	,kw.crtd_id
+	,kw.crtd_dt
+	,(select caps_name from ks_user where id=kw.mdfy_id) as mdfy_id
+	,kw.mdfy_dt
+	from ks_workout kw, ks_user u
+	where kw.crtd_id=u.id and out_dt  between #{fromDate} and #{toDate}
+	<if test="searchDept != 'all'">
+	 and u.dept_cd=#{searchDept}
+	</if>
+	<if test="searchUser != 'all'">
+	 and kw.crtd_id=#{searchUser}
+	</if>
+	and u.auth_cd <![CDATA[<>]]> '003' and u.state_cd='001'
+		
 	</select>
 
 	<update id="updateWorkout" parameterType="com.kspat.web.domain.Workout">

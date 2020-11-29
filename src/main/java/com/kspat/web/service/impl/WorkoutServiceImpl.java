@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.kspat.web.domain.BusinessTrip;
 import com.kspat.web.domain.SearchParam;
 import com.kspat.web.domain.Workout;
 import com.kspat.web.mapper.WorkoutMapper;

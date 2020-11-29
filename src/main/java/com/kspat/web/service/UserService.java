@@ -46,5 +46,7 @@ public interface UserService {
 
 	List<DeptMapping> getDeptManagerCount();
 
+	List<CodeData> getDeptList(String deptCd);
+
 
 }

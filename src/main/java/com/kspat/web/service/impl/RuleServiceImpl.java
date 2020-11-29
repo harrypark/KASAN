@@ -50,7 +50,7 @@ public class RuleServiceImpl implements RuleService {
 			dailyRule.setDuplicate(true);
 
 		}else{
-			System.out.println("설마");
+			//System.out.println("설마");
 			ruleMapper.updateDailyRuleLastRecord(dailyRule);
 
 			ruleMapper.insertDailyRule(dailyRule);

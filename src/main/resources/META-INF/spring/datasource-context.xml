@@ -36,8 +36,9 @@
         <property name="url" value="jdbc:sqlserver://localhost:1433;DatabaseName=KASAN_ATTENDANCE" />
         <property name="username" value="Attendance" />
         <property name="password" value="ksip6627!@" />
-<!--         <property name="username" value="sa" /> -->
-<!--         <property name="password" value="sunedu21" /> -->
+<!--         <property name="url" value="jdbc:sqlserver://52.231.39.135:17208;DatabaseName=KASAN_ATTENDANCE" /> -->
+<!--         <property name="username" value="testattendance" /> -->
+<!--         <property name="password" value="1234@1234" /> -->
 <!--         <property name="connectionProperties"> -->
 <!--             <value>charSet=euc-kr</value> -->
 <!--         </property> -->

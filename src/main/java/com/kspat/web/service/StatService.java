@@ -27,4 +27,6 @@ public interface StatService {
 
 	int[] updateLateStat(String targetYear);
 
+	List<Score> getAnnualEmailSendScoreList(SearchParam searchParam);
+
 }

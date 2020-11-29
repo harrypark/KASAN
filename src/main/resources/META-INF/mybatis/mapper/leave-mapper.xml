@@ -6,18 +6,25 @@
 <mapper namespace="com.kspat.web.mapper.LeaveMapper">
 
 	<select id="getLeaveList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.Leave">
-		select id
+		select kl.id
 			,convert(varchar(10),le_dt,120) as le_dt
 			,term
 			,memo
 			,offcial
-			,(select caps_name from ks_user where id=kl.crtd_id) as crtd_id
-			,crtd_dt
+			,(select caps_name from ks_user where id=kl.crtd_id) as crtd_Nm
+			,kl.crtd_id
+			,kl.crtd_dt
 			,(select caps_name from ks_user where id=kl.mdfy_id) as mdfy_id
-			,mdfy_dt
-		from ks_leave kl
-		where crtd_id=#{crtdId}
-		and le_dt  between #{fromDate} and #{toDate}
+			,kl.mdfy_dt
+		from ks_leave kl, ks_user u
+		where kl.crtd_id=u.id and le_dt  between #{fromDate} and #{toDate}
+		<if test="searchDept != 'all'">
+			and u.dept_cd=#{searchDept}
+		</if>
+		<if test="searchUser != 'all'">
+			and kl.crtd_id=#{searchUser}
+		</if>
+		and u.auth_cd <![CDATA[<>]]> '003' and u.state_cd='001'
 	</select>
 
 	<insert id="insertLeave" parameterType="com.kspat.web.domain.Leave" useGeneratedKeys="true" keyProperty="id">
@@ -35,7 +42,7 @@
 	<select id="checkLeaveDay" parameterType="com.kspat.web.domain.Leave" resultType="com.kspat.web.domain.Calendar">
 		select * from ks_calendar
 		where CAL_DATE1 between #{startDt} and #{endDt}
-		and CAL_WEEKEND_YN='N' and CAL_HOLIDAY_YN='N'
+<!-- 		and CAL_WEEKEND_YN='N' and CAL_HOLIDAY_YN='N' -->
 	</select>
 
 	<select id="getLeaveDetail" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.Leave">
@@ -60,19 +67,26 @@
 
 
 	<select id="getHalfLeaveList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.HalfLeave">
-		select id
+		select khl.id
 			,year
 			,convert(varchar(10),hl_dt,120) as hl_dt
 			,term
 			,memo
 			,offcial
-			,(select caps_name from ks_user where id=khl.crtd_id) as crtd_id
-			,crtd_dt
+			,(select caps_name from ks_user where id=khl.crtd_id) as crtd_nm
+			,khl.crtd_id
+			,khl.crtd_dt
 			,(select caps_name from ks_user where id=khl.mdfy_id) as mdfy_id
-			,mdfy_dt
-		from ks_half_leave khl
-		where crtd_id=#{crtdId}
-		and hl_dt between #{fromDate} and #{toDate}
+			,khl.mdfy_dt
+		from ks_half_leave khl, ks_user u
+		where khl.crtd_id=u.id and hl_dt  between #{fromDate} and #{toDate}
+		<if test="searchDept != 'all'">
+			and u.dept_cd=#{searchDept}
+		</if>
+		<if test="searchUser != 'all'">
+			and khl.crtd_id=#{searchUser}
+		</if>
+		and u.auth_cd <![CDATA[<>]]> '003' and u.state_cd='001'
 	</select>
 
 

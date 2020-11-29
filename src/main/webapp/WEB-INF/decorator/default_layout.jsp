@@ -101,6 +101,12 @@ response.setHeader("Cache-Control", "no-cache");
 	                    <li>
 	                        <a href="<c:url value="/dashboard"/>" class="menu"><i class="fa fa-th-large"></i> <span class="nav-label">대시보드 </span></a>
 	                    </li>
+	                    <li>
+	                        <a href="<c:url value="/dashboard/calendar"/>" class="menu"><i class="fa fa-calendar"></i> <span class="nav-label">일정캘린더 </span></a>
+	                    </li>
+	                    <li>
+	                        <a href="<c:url value="/dashboard/private"/>" class="menu"><i class="fa fa-search"></i> <span class="nav-label">일정검색</span></a>
+	                    </li>
 	                    </c:if>
 	                    <c:choose>
 	                    	<c:when test="${authCd ne '003'}">

@@ -200,6 +200,12 @@ public class UserServiceImpl implements UserService{
 		return userMapper.getDeptManagerCount();
 	}
 
+	@Override
+	public List<CodeData> getDeptList(String deptCd) {
+		// TODO Auto-generated method stub
+		return userMapper.getDeptList(deptCd);
+	}
+
 /*
 	@Override
 	public List<User> getManagerUserList(SearchParam searchParam) {

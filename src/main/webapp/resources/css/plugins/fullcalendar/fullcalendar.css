@@ -465,6 +465,27 @@ temporary rendered events).
 	background-color: #23c6c8; /* 내이벤트 BACKGROUND color */
 }
 
+.fc-wo-event{
+	background-color: #23c6c8; /* 외근 BACKGROUND color */
+}
+.fc-bt-event{
+	background-color: #1ab394; /* 출장 BACKGROUND color */
+}
+.fc-le-event{
+	background-color: #f8ac59; /* 휴가 BACKGROUND color */
+}
+.fc-hl-event{
+	background-color: #ed5565; /* 반휴 BACKGROUND color */
+}
+.fc-re-event{
+	background-color: #1c84c6; /* 빠지는날 BACKGROUND color */
+}
+.fc-su-event{
+	background-color: #262626; /* 채우는날 BACKGROUND color */
+} 
+
+
+
 /* overpower some of bootstrap's and jqui's styles on <a> tags */
 .fc-event,
 .fc-event:hover,

@@ -76,6 +76,7 @@ public class StatServiceImpl implements StatService {
 	@Override
 	public List<DailyStat> manualCreateDailyStat(SearchParam searchParam) {
 		List<DailyStat> statList = new ArrayList<DailyStat>();
+		//searchParam.setSearchDt("2019-09-25");//test 용
 		String calDt = searchParam.getSearchDt();
 
 
@@ -159,9 +160,9 @@ public class StatServiceImpl implements StatService {
 		List<DailyStat> dsList = new ArrayList<DailyStat>();
 		for(UserState us: list){
 			DailyStat ds= new DailyStat(us.getId(),us.getCapsName(),calDt,dayInfo.getCalWeekName(),dayInfo.getIsHoliday(),dayInfo.getDataError());
-			logger.debug("***********************");
-			logger.debug(ds.toString());
-			logger.debug("***********************");
+//			logger.info("***********************");
+//			logger.info(ds.toString());
+//			logger.info("***********************");
 
 
 			if("Y".equals(dayInfo.getDataError())){
@@ -679,6 +680,17 @@ public class StatServiceImpl implements StatService {
 		String[] sendTo2 = {"bbaga93@naver.com","bbaga93@gmail.com"};
 		 */
 		return sendTo;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * 매년 06-25, 10-25 미사용연차에대한 메일발송
+	 * @see com.kspat.web.service.StatService#getAnnualEmailSendScoreList(com.kspat.web.domain.SearchParam)
+	 */
+	@Override
+	public List<Score> getAnnualEmailSendScoreList(SearchParam searchParam) {
+		return statMapper.getAnnualEmailSendScoreList(searchParam);
 	}
 
 

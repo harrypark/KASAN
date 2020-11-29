@@ -17,27 +17,36 @@
 			,convert(varchar(10),start_dt,120) + ' ~ ' +  convert(varchar(10),end_dt,120) as trip_range
 			,destination
 			,memo
-			,(select caps_name from ks_user where id=kbt.crtd_id) as crtd_id
+		--	,(select caps_name from ks_user where id=kbt.crtd_id) as crtd_id
+			,crtd_id
 			,crtd_dt
-			,(select caps_name from ks_user where id=kbt.mdfy_id) as mdfy_id
+		--	,(select caps_name from ks_user where id=kbt.mdfy_id) as mdfy_id
+			,mdfy_id
 			,mdfy_dt
 		from ks_business_trip kbt
 		where id=#{searchId}
 	</select>
 
 	<select id="getUserBusinessTripList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.BusinessTrip">
-		select id
+		select kbt.id
 			,convert(varchar(10),start_dt,120) as start_dt
 			,convert(varchar(10),end_dt,120) as end_dt
 			,destination
 			,memo
-			,(select caps_name from ks_user where id=kbt.crtd_id) as crtd_id
-			,crtd_dt
+			,(select caps_name from ks_user where id=kbt.crtd_id) as crtd_nm
+			,kbt.crtd_id
+			,kbt.crtd_dt
 			,(select caps_name from ks_user where id=kbt.mdfy_id) as mdfy_id
-			,mdfy_dt
-		from ks_business_trip kbt
-		where crtd_id=#{crtdId}
-		and (start_dt  between #{fromDate} and #{toDate} or end_dt between #{fromDate} and #{toDate})
+			,kbt.mdfy_dt
+		from ks_business_trip kbt, ks_user u
+		where kbt.crtd_id=u.id and (start_dt  between #{fromDate} and #{toDate} or end_dt between #{fromDate} and #{toDate})
+		<if test="searchDept != 'all'">
+			and u.dept_cd=#{searchDept}
+		</if>
+		<if test="searchUser != 'all'">
+			and kbt.crtd_id=#{searchUser}
+		</if>
+		and u.auth_cd <![CDATA[<>]]> '003' and u.state_cd='001'
 	</select>
 
 	<update id="updateBusinessTrip" parameterType="com.kspat.web.domain.BusinessTrip">

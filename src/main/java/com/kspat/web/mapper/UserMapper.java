@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.kspat.web.domain.CodeData;
 import com.kspat.web.domain.DeptMapping;
 import com.kspat.web.domain.Pwd;
 import com.kspat.web.domain.RawData;
@@ -62,6 +63,8 @@ public interface UserMapper {
 	void updateAttendanceId(User attUseInfo);
 
 	void deleteUserStateChangeDailyStat(User user);
+
+	List<CodeData> getDeptList(String deptCd);
 
 
 }

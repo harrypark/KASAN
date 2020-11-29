@@ -14,13 +14,14 @@
 	<select id="checkAvailableReplaceCount" parameterType="com.kspat.web.domain.SearchParam" resultType="int">
 	select month_replace_count - (select count(distinct repl_dt) from ks_replace where crtd_id=#{crtdId} and convert(varchar(7), repl_dt, 120) =convert(varchar(7), getdate(), 120))
 		from ks_daily_rule
-		where getdate() between apply_start_dt and apply_end_dt;
+		where getdate() between apply_start_dt and apply_end_dt
 	</select>
 
 	<select id="checkAvailableReplaceInfo" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.AvailableReplaceInfo">
 	select month_replace_count - (select count(distinct repl_dt) from ks_replace where crtd_id=#{crtdId} and convert(varchar(7), repl_dt, 120) =convert(varchar(7), getdate(), 120)) as currCount,
 		   max_replace_hr*60 - ISNULL((select sum(term) from ks_replace where crtd_id=#{crtdId} and repl_dt =#{searchDt} group by repl_dt),0) as todayMin,
-		   isnull((select 	convert(varchar(5),max(repl_end_tm),114) from ks_replace where crtd_id=#{crtdId} and repl_dt=#{searchDt}),go_start_tm) as availStartTm
+		   isnull((select 	convert(varchar(5),max(repl_end_tm),114) from ks_replace where crtd_id=#{crtdId} and repl_dt=#{searchDt}),go_start_tm) as availStartTm,
+		   (select (CASE WHEN count(*) = 0 THEN 'no' ELSE 'yes' END)  from ks_half_Leave where crtd_id=#{crtdId} and hl_dt=#{searchDt}) as hasHl
 	from ks_daily_rule
 	where #{searchDt} between apply_start_dt and apply_end_dt
 	</select>
@@ -52,7 +53,7 @@
 	</select>
 
 	<select id="getReplaceList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.Replace">
-		select id
+		select re.id
 			,convert(varchar(10),repl_dt,120) as repl_dt
 			,convert(varchar(5),repl_start_tm,114) as repl_start_tm
 			,convert(varchar(5),repl_end_tm,114) as repl_end_tm
@@ -60,13 +61,20 @@
 			,convert(varchar(10),supple_dt,120) as supple_dt
 			,memo
 			,in_lunch
-			,(select caps_name from ks_user where id=re.crtd_id) as crtd_id
-			,crtd_dt
+			,(select caps_name from ks_user where id=re.crtd_id) as crtd_nm
+			,re.crtd_id
+			,re.crtd_dt
 			,(select caps_name from ks_user where id=re.mdfy_id) as mdfy_id
-			,mdfy_dt
-		from ks_replace re
-		where crtd_id=#{crtdId}
-		and (repl_dt  between #{fromDate} and #{toDate} or supple_dt  between #{fromDate} and #{toDate})
+			,re.mdfy_dt
+		from ks_replace re , ks_user u
+		where re.crtd_id=u.id and (repl_dt  between #{fromDate} and #{toDate} or supple_dt  between #{fromDate} and #{toDate})
+		<if test="searchDept != 'all'">
+			and u.dept_cd=#{searchDept}
+		</if>
+		<if test="searchUser != 'all'">
+			and re.crtd_id=#{searchUser}
+		</if>
+		and u.auth_cd <![CDATA[<>]]> '003' and u.state_cd='001'
 	</select>
 
 
@@ -91,7 +99,9 @@
 		where id=#{id}
 	</update>
 
-
+	<select id="hasSelectDayReplace" parameterType="com.kspat.web.domain.SearchParam" resultType="string">
+	select CASE WHEN count(*) = 0 THEN 'no' ELSE 'yes' END from ks_replace where crtd_id=#{id} and repl_dt=#{searchDt}
+	</select>
 
 
 

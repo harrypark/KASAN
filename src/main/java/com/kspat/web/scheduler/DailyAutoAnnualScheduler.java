@@ -25,6 +25,7 @@ public class DailyAutoAnnualScheduler {
 	@Autowired
 	private AutoAnnualService autoAnnualService;
 
+
 	//Formatter
 	DateTimeFormatter fmt_ymdhms = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
 	DateTimeFormatter fmt_ymd = DateTimeFormat.forPattern("yyyy-MM-dd");
@@ -44,11 +45,18 @@ public class DailyAutoAnnualScheduler {
 
 		List<AutoAnnual> list = autoAnnualService.manualCreateAutoAnnual(searchParam);
 
+
 		if(list != null){
 			logger.debug("===>AutoAnnual 전체작업건수:"+ list.size());
 		}else{
 			logger.debug("===>AutoAnnual 전체작업건수:"+ list);
 		}
+
+
+		// 매년 06-25, 10-25 미사용연차에대한 메일발송
+		autoAnnualService.sendRemainingAnnualMail(searchParam);
+
+
 	    stopWatch.stop();
 	    logger.debug("작업시간:"+ stopWatch.toString());
 	    logger.debug("=== Daily AutoAnnual batch end==================");

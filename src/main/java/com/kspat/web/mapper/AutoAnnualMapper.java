@@ -24,4 +24,6 @@ public interface AutoAnnualMapper {
 
 	AutoAnnual getUserAutoAnnualDetail(SearchParam searchParam);
 
+	void deleteAllAutoAnnual();
+
 }

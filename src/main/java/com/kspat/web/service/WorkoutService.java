@@ -2,7 +2,6 @@ package com.kspat.web.service;
 
 import java.util.List;
 
-import com.kspat.web.domain.BusinessTrip;
 import com.kspat.web.domain.SearchParam;
 import com.kspat.web.domain.Workout;
 

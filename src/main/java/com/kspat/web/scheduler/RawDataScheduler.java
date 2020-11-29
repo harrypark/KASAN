@@ -11,13 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.kspat.util.common.DateTimeUtil;
-import com.kspat.web.domain.Calendar;
 import com.kspat.web.domain.DayInfo;
-import com.kspat.web.domain.RawData;
 import com.kspat.web.domain.SearchParam;
 import com.kspat.web.mapper.CalendarMapper;
-import com.kspat.web.service.CalendarService;
 import com.kspat.web.service.EmailTempleatService;
 import com.kspat.web.service.UserService;
 
@@ -61,7 +57,7 @@ public class RawDataScheduler {
 		DayInfo todayInfo = calendarMapper.getDayInfo(currDate);
 		logger.debug("오늘 정보 : {}",todayInfo.toString());
 		logger.debug("휴일인가? : {}",todayInfo.getIsHoliday());
-		//휴일이 아니라면 2시간동안의 RowData count 체크
+		//휴일이 아니라면 2시간동안의 rawData count 체크
 		if("N".equals(todayInfo.getIsHoliday())){
 			String toDate = dateTime.toString(fmt_ymdhm2);
 			String fromDate = dateTime.minusHours(2).toString(fmt_ymdhm2);

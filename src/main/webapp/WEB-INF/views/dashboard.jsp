@@ -145,7 +145,7 @@
 			}else if($(this).hasClass('tr-hl')){//go 반휴
 				location.href = '<c:url value="/app/leave"/>'+'?type=2';
 			}else if($(this).hasClass('tr-wo')){//go 외근공지
-				location.href = '<c:url value="/app/businessTrip"/>';
+				location.href = '<c:url value="/app/workoutSide"/>';
 			}else if($(this).hasClass('tr-re')){//go 대체근무(대체)
 				location.href = '<c:url value="/app/replace"/>';
 			}else if($(this).hasClass('tr-su')){//go 대체근무(보충)

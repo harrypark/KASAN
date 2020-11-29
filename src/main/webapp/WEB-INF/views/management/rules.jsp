@@ -424,7 +424,7 @@ var clickRowYearlyRule;
 	//add cancel
 	$('#btnDailyRuleCancel').click(function(e){
 		//e.preventDefault();
-		alert("1");
+		//alert("1");
 		dailyRuleFormReset();
 	});
 	$('#btnYearlyRuleCancel').click(function(e){

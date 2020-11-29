@@ -2,18 +2,6 @@ package com.kspat.web.service.impl;
 
 import java.util.HashMap;
 import java.util.Map;
-
-
-
-
-
-
-
-
-
-
-
-
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -29,6 +17,7 @@ import com.kspat.web.domain.HalfLeave;
 import com.kspat.web.domain.LatePoint;
 import com.kspat.web.domain.Leave;
 import com.kspat.web.domain.Replace;
+import com.kspat.web.domain.Score;
 import com.kspat.web.domain.User;
 import com.kspat.web.domain.Workout;
 import com.kspat.web.mapper.EmailMapper;
@@ -90,12 +79,16 @@ public class EmailTempleatServiceImpl implements EmailTempleatService {
 
 
 	/** Caps Raw Data template. */
-	@Value("#{sendMailInfo.rowDataMailForm}")
-    private String rowDataMailForm;
+	@Value("#{sendMailInfo.rawDataMailForm}")
+    private String rawDataMailForm;
 
 	/** Late Point template. */
 	@Value("#{sendMailInfo.latePointMailForm}")
     private String latePointMailForm;
+
+	/** remainingAnnual(잔여연차통보) template. */
+	@Value("#{sendMailInfo.remainingAnnualMailForm}")
+    private String remainingAnnualMailForm;
 
 
 
@@ -317,7 +310,7 @@ public class EmailTempleatServiceImpl implements EmailTempleatService {
 			params.put("today", dateTime.toString(fmt_ymdhm));
 
 			//if(!"test".equals(mode))
-			emailService.sendMail(rowDataMailForm, params, subject, sendTo);
+			emailService.sendMail(rawDataMailForm, params, subject, sendTo);
 		}
 
 
@@ -351,6 +344,25 @@ public class EmailTempleatServiceImpl implements EmailTempleatService {
 
 	}
 
+	@Override
+	public void setRemainingAnnualEmailTempleate(Score score) {
+		DateTime dateTime = new DateTime();
+		String sendTo = score.getEmail();
+		//제목
+		String subject = "[연차관련안내] 미사용 연차 확인 요청 (대상자:"+score.getCapsName()+")";
+		// 메일내용
+		Map<String, String> params = new HashMap<String,String>();
+		params.put("title", subject);
+		params.put("name", score.getCapsName());
+		params.put("deptNm", score.getDeptName());
+		params.put("startDt", score.getStartDt());
+		params.put("endDt", score.getEndDt());
+		params.put("currCount", String.valueOf(score.getCurrCount()));
+		params.put("today", dateTime.toString(fmt_ymdhm));
+
+
+		emailService.sendMail(remainingAnnualMailForm, params, subject,  sendTo);
+	}
 
 
 }

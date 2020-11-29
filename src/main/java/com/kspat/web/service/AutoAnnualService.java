@@ -16,4 +16,6 @@ public interface AutoAnnualService {
 
 	AutoAnnual editComPenAnnual(ComPenAnnual cpa);
 
+	void sendRemainingAnnualMail(SearchParam searchParam);
+
 }

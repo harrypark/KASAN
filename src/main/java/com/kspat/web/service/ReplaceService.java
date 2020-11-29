@@ -24,4 +24,6 @@ public interface ReplaceService {
 
 	AvailableReplaceInfo checkAvailableReplaceInfo(SearchParam param);
 
+	String hasSelectDayReplace(SearchParam searchParam);
+
 }

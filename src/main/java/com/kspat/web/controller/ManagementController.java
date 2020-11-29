@@ -86,6 +86,7 @@ public class ManagementController {
 	@Autowired
 	private EmailService emailService;
 
+
 	//Formatter
 	DateTimeFormatter fmt_ymdhms = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
 	DateTimeFormatter fmt_ymd = DateTimeFormat.forPattern("yyyy-MM-dd");
@@ -528,6 +529,12 @@ public class ManagementController {
 	    searchParam.setSearchDate(dateTime.toString(fmt_ymd));
 
 		List<AutoAnnual> list = autoAnnualService.manualCreateAutoAnnual(searchParam);
+
+
+
+		// 매년 06-25, 10-25 미사용연차에대한 메일발송
+		// 관리자가 일부러 보내지 않는다. 테스트 할때만 사용
+		//autoAnnualService.sendRemainingAnnualMail(searchParam);
 
 		logger.debug("=== Manual Auto Annual Create End==================");
 		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();

@@ -35,9 +35,9 @@
 
 	<insert id="upsertAutoAnnual" parameterType="com.kspat.web.domain.AutoAnnual">
 		IF EXISTS(select * from ks_auto_annual where id=#{id} and year=#{year} and type=#{type})
-		   update ks_auto_annual set auto_annual=#{autoAnnual},avail_count=#{availCount},appply_dt_type=#{applyDtType},start_dt=#{startDt},end_dt=#{endDt},mdfy_id=#{mdfyId},mdfy_dt=getdate()  where id=#{id} and year=#{year} and type=#{type}
+		   update ks_auto_annual set auto_annual=#{autoAnnual},avail_count=#{availCount},apply_dt_type=#{applyDtType},start_dt=#{startDt},end_dt=#{endDt},mdfy_id=#{mdfyId},mdfy_dt=getdate()  where id=#{id} and year=#{year} and type=#{type}
 		ELSE
-		   INSERT INTO ks_auto_annual(id,year,type,auto_annual,avail_count,appply_dt_type,start_dt,end_dt,crtd_id,crtd_dt,mdfy_id,mdfy_dt)
+		   INSERT INTO ks_auto_annual(id,year,type,auto_annual,avail_count,apply_dt_type,start_dt,end_dt,crtd_id,crtd_dt,mdfy_id,mdfy_dt)
  		   VALUES (#{id} ,#{year},#{type},#{autoAnnual},#{availCount},#{applyDtType},#{startDt},#{endDt},#{crtdId},getdate(),#{mdfyId},getdate())
 	</insert>
 
@@ -126,5 +126,9 @@
 		   INSERT INTO ks_annual_compen(id,start_dt,end_dt,com_annual,memo,crtd_id,crtd_dt,mdfy_id,mdfy_dt)
  		   VALUES (#{id} ,#{startDt},#{endDt},#{comAnnual},#{memo},#{crtdId},getdate(),#{mdfyId},getdate())
 	</insert>
+	
+	<delete id="deleteAllAutoAnnual">
+		delete from ks_auto_annual
+	</delete>
 
 </mapper>

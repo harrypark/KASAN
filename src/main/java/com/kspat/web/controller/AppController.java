@@ -23,6 +23,7 @@ import com.kspat.util.common.DateTimeUtil;
 import com.kspat.util.common.SessionUtil;
 import com.kspat.web.domain.AvailableReplaceInfo;
 import com.kspat.web.domain.BusinessTrip;
+import com.kspat.web.domain.CodeData;
 import com.kspat.web.domain.DailyRule;
 import com.kspat.web.domain.HalfLeave;
 import com.kspat.web.domain.Leave;
@@ -32,6 +33,7 @@ import com.kspat.web.domain.SearchParam;
 import com.kspat.web.domain.SessionInfo;
 import com.kspat.web.domain.Workout;
 import com.kspat.web.service.BusinessTripService;
+import com.kspat.web.service.CodeService;
 import com.kspat.web.service.LeaveService;
 import com.kspat.web.service.ReplaceService;
 import com.kspat.web.service.RuleService;
@@ -65,6 +67,9 @@ public class AppController {
 
 	@Autowired
 	private ReplaceService replaceService;
+	
+	@Autowired
+	private CodeService codeService;
 
 	/** 외근공지 화면
 	 * @param model
@@ -76,6 +81,12 @@ public class AppController {
 	 */
 	@RequestMapping(value = "/workoutSide")
 	public String workoutSide(Model model, SearchParam searchParam,HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+		SessionInfo info =SessionUtil.getSessionInfo(request);
+		model.addAttribute("info", info);
+		logger.debug(info.toString());
+		List<CodeData> deptList = codeService.getCommonCodeList("DEPT");
+		model.addAttribute("deptList", deptList);
+		
 		//외근 신청가능시간 (출근가능 시작시간 ~ 출근가능 종료시간+9시간)
 		Workout wotm = workoutService.getWorkoutAvailableTime();
 		model.addAttribute("wotm",wotm);
@@ -114,8 +125,11 @@ public class AppController {
 	@RequestMapping(value = "/getUserWorkoutListAjax",  produces="text/plain;charset=UTF-8")
 	public @ResponseBody String getUserWorkoutListAjax(Model model,SearchParam searchParam,HttpServletRequest request) {
 		SessionInfo info =SessionUtil.getSessionInfo(request);
-		searchParam.setCrtdId(Integer.toString(info.getId()));
-
+//			if(!"all".equals(searchParam.getSearchUser())) {
+//				searchParam.setCrtdId(searchParam.getSearchUser());
+//			}
+		logger.debug(searchParam.toString());
+		
 		List<Workout> list = workoutService.getUserWorkoutList(searchParam);
 
 		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
@@ -175,7 +189,12 @@ public class AppController {
 
 	@RequestMapping(value = "/businessTrip")
 	public String businessTrip(Model model, SearchParam searchParam,HttpServletRequest request, HttpServletResponse response, HttpSession session) {
-
+		SessionInfo info =SessionUtil.getSessionInfo(request);
+		model.addAttribute("info", info);
+		logger.debug(info.toString());
+		
+		List<CodeData> deptList = codeService.getCommonCodeList("DEPT");
+		model.addAttribute("deptList", deptList);
 		return "app/businessTrip";
 
 	}
@@ -200,7 +219,7 @@ public class AppController {
 	@RequestMapping(value = "/getUserBusinessTripListAjax",  produces="text/plain;charset=UTF-8")
 	public @ResponseBody String getUserBusinessTripListAjax(Model model,SearchParam searchParam,HttpServletRequest request) {
 		SessionInfo info =SessionUtil.getSessionInfo(request);
-		searchParam.setCrtdId(Integer.toString(info.getId()));
+		//searchParam.setCrtdId(Integer.toString(info.getId()));
 
 		List<BusinessTrip> list = businessTripService.getUserBusinessTripList(searchParam);
 
@@ -248,8 +267,12 @@ public class AppController {
 	@RequestMapping(value = "/leave")
 	public String leave(Model model, SearchParam searchParam,HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 		SessionInfo info =SessionUtil.getSessionInfo(request);
+		model.addAttribute("info", info);
+		logger.debug(info.toString());
 		searchParam.setId(Integer.toString(info.getId()));
-
+		
+		List<CodeData> deptList = codeService.getCommonCodeList("DEPT");
+		model.addAttribute("deptList", deptList);
 		String annualMinusUseYn = leaveService.getAnnualMinusUseYn();
 		Score score =  statService.getUserScore(searchParam);
 
@@ -280,6 +303,10 @@ public class AppController {
 		if(score != null){
 			map.put("result", "ok");
 			map.put("currCount", String.valueOf(score.getCurrCount()));
+			if(searchParam.getSearchDt() != null) {//반휴신청만 날짜가넘어온다. 반휴만 대체근무체크
+				map.put("hasRe",replaceService.hasSelectDayReplace(searchParam));
+			}
+			
 		}else{
 			map.put("result", "fail");
 		}
@@ -410,7 +437,13 @@ public class AppController {
 	/** 대체근무   ******/
 	@RequestMapping(value = "/replace")
 	public String replace(Model model, SearchParam searchParam,HttpServletRequest request, HttpServletResponse response, HttpSession session) {
-
+		SessionInfo info =SessionUtil.getSessionInfo(request);
+		model.addAttribute("info", info);
+		logger.debug(info.toString());
+		
+		List<CodeData> deptList = codeService.getCommonCodeList("DEPT");
+		model.addAttribute("deptList", deptList);
+		
 		DailyRule dr = ruleService.getCurrentDailyRule(DateTimeUtil.getTodayString());
 		Replace replace = replaceService.getReplaceAvailableTime();
 
@@ -426,6 +459,7 @@ public class AppController {
 		param.setCrtdId(Integer.toString(info.getId()));
 
 		AvailableReplaceInfo repInfo = replaceService.checkAvailableReplaceInfo(param);
+		logger.debug(repInfo.toString());
 
 		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
 		return gson.toJson(repInfo);
@@ -451,7 +485,7 @@ public class AppController {
 	@RequestMapping(value = "/replaceListAjax",  produces="text/plain;charset=UTF-8")
 	public @ResponseBody String replaceListAjax(Model model,SearchParam searchParam,HttpServletRequest request) {
 		SessionInfo info =SessionUtil.getSessionInfo(request);
-		searchParam.setCrtdId(Integer.toString(info.getId()));
+		//searchParam.setCrtdId(Integer.toString(info.getId()));
 
 		List<Replace> list = replaceService.getReplaceList(searchParam);
 

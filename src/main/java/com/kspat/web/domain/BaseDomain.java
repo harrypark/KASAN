@@ -13,10 +13,12 @@ public abstract class BaseDomain implements Serializable{
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
 	private Date crtdDt;
 	private String crtdId;
+	private String crtdNm;
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
 	private Date mdfyDt;
 	private String mdfyId;
+	private String mdfyNm;
 
 	private String timeDiff;
 

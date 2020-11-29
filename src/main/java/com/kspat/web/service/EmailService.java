@@ -8,11 +8,10 @@ import com.kspat.web.domain.SearchParam;
 
 public interface EmailService {
 
-	public void sendMail(Map<String, String> params, String subject, String template, String email);
+	public void sendMail(String template, Map<String, String> params, String subject,  String email);
 
 
-	public void sendMail(String template, Map<String, String> params,
-			String subject,  String[] sendTo);
+	public void sendMail(String template, Map<String, String> params,String subject,  String[] sendTo);
 
 
 	public String getMailSendType();

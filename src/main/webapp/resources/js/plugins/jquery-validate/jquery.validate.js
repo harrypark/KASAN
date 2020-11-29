@@ -351,7 +351,7 @@ $.extend( $.validator, {
 
 	messages: {
 		//required: "This field is required.",
-		required: "필수로 입력하세요..",
+		required: "필수로 입력하세요.",
 		remote: "Please fix this field.",
 		email: "메일주소를 확인하세요.",
 		url: "Please enter a valid URL.",

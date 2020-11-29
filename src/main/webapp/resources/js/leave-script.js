@@ -21,12 +21,13 @@
 		//, "sPaginationType" : "bootstrap_full"
 		, "bRetrieve": true
 		, "bDeferRender": false
-		, "aaSorting": [[ 0, "desc" ]]
+		, "aaSorting": [[ 5, "asc" ]]
 	  			,"autoWidth": false
 
 
 		});
    	leave_table.fnSetColumnVis(0, false);//index hide
+   	leave_table.fnSetColumnVis(1, false);//crtd_id
   	//$('div#tab-1 div.dataTables_filter').append('<button class="btn btn-w-m btn-primary m-r-sm" data-toggle="modal" data-backdrop="static" type="button"  data-target="#modal_leave" data-backdrop="static"> Add </button>');
 
   	halfLeave_table = $('#halfLeave_table').dataTable({
@@ -55,6 +56,7 @@
 				,"autoWidth": false
 		});
   	halfLeave_table.fnSetColumnVis(0, false);//index hide
+  	halfLeave_table.fnSetColumnVis(1, false);//crtd_id
  	//$('div#tab-2 div.dataTables_filter').append('<button class="btn btn-w-m btn-primary m-r-sm" data-toggle="modal" data-backdrop="static" type="button"  data-target="#modal_halfLeave" data-backdrop="static"> Add </button>');
 
 
@@ -68,7 +70,27 @@
         autoclose: true,
         todayHighlight: true
     }).on('hide', function(){
-    	$('ul#leaveTab li').each(function( index ) {
+    	getList();
+    });
+   	$('#fromDate').val(moment().subtract(15, 'days').format('YYYY-MM-DD'));
+   	$('#toDate').val(moment().add(15, 'days').format('YYYY-MM-DD'));
+   	$('#fromDate').datepicker('setDate', moment().subtract(15, 'days').format('YYYY-MM-DD'));
+	$('#toDate').datepicker('setDate', moment().add(15, 'days').format('YYYY-MM-DD'));
+
+	searchDeptUser();
+	$("#searchDept").change(function(){
+		searchDeptUser('deptChange');
+	})
+	
+	$('#searchUser').change(function(){
+		getList();
+	})
+
+
+ })
+ //휴가목록, 반휴목록 판단
+ 	function getList(){
+	 $('ul#leaveTab li').each(function( index ) {
 			if($(this).hasClass('active')){
 			//console.log( index + ": " + $( this ).text() );
 				if(index==0){
@@ -78,18 +100,7 @@
 				}
 			}
 		})
-    });
-   	$('#fromDate').val(moment().subtract(15, 'days').format('YYYY-MM-DD'));
-   	$('#toDate').val(moment().add(15, 'days').format('YYYY-MM-DD'));
-   	$('#fromDate').datepicker('setDate', moment().subtract(15, 'days').format('YYYY-MM-DD'));
-	$('#toDate').datepicker('setDate', moment().add(15, 'days').format('YYYY-MM-DD'));
-
-
-
-
- })
-
-
+ 	}
 
 
 	function halfLeaveFormReset(){
@@ -113,13 +124,13 @@
 
 	function fnClickAddRowhalfLeave(data){
 		halfLeave_table.fnAddData( [
-					data.id,data.hlDt, data.term, data.offcial,data.crtdId, data.crtdDt,data.mdfyId, data.mdfyDt
+					data.id,data.crtdId,data.hlDt, data.term, data.offcial,data.crtdNm, data.crtdDt,data.mdfyId, data.mdfyDt
 				], false);
 
 	}
 	function fnClickUpdateRowhalfLeave(data){
 		halfLeave_table.fnUpdate( [
-					data.id,data.hlDt, data.term,  data.offcial,data.crtdId, data.crtdDt,data.mdfyId, data.mdfyDt
+					data.id,data.crtdId,data.hlDt, data.term,  data.offcial,data.crtdNm, data.crtdDt,data.mdfyId, data.mdfyDt
 				], clickRowhalfLeave);
 	}
 

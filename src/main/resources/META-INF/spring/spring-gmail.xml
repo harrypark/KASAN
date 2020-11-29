@@ -26,13 +26,21 @@
 		<prop key="leaveMailForm">leaveMailForm.html</prop>
 		<prop key="hlMailForm">hlMailForm.html</prop>
 		<prop key="replaceMailForm">replaceMailForm.html</prop>
-		<prop key="rowDataMailForm">rawDataMailForm.html</prop>
+		<prop key="rawDataMailForm">rawDataMailForm.html</prop>
 		<prop key="latePointMailForm">latePointMailForm.html</prop>
+		<prop key="remainingAnnualMailForm">remainingAnnualMailForm.html</prop>
 
 		<prop key="devMail">bbaga93@daum.net</prop><!-- 개발자 메일주소(테스트용) -->
 		<prop key="address">kasan@iipservice.com</prop>
 
+		<prop key="operate">false</prop> <!-- 운영 true   개발 false     메일발송여부 -->
+
 	</util:properties>
+	<!-- 연차확인 메일을 보내는 날짜 매년   MM-dd   -->
+	<util:set id="checkDay">
+	  <value>06-25</value>
+	  <value>10-25</value>
+	</util:set>
 
 	<util:properties id="file">
 		<prop key="baseDir">D:\my.kspat.com\file\</prop>

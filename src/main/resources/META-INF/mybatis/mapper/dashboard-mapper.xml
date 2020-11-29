@@ -11,10 +11,20 @@
 			   ,destination as info
 		from ks_business_trip where #{searchDt} between start_dt and end_dt and crtd_id=#{crtdId}
 		union all
-		select 'le' as cssText,'휴가' as gubun
-		       ,convert(varchar(10),le_dt,120) as term
-			   ,memo as info
-		from ks_leave where le_dt=#{searchDt} and crtd_id=#{crtdId}
+		select  'le' as cssText,'휴가' as gubun
+			  ,convert(varchar(10),from_dt,120) +'~'+convert(varchar(10),to_dt,120) as term
+			  , memo as info
+		 from (
+			 select   crtd_id, MIN(le_dt) from_dt, MAX(le_dt) to_dt , COUNT(*) cnt, max(memo) as memo
+			 from (
+					select  crtd_id, le_dt,memo
+						,ROW_NUMBER() over ( PARTITION BY crtd_id order by  le_dt ) idx
+						,DATEDIFF( day, le_dt, getdate() )  no
+					from  ks_leave  where le_dt>=DATEADD(day, -10, #{searchDt}) and crtd_id=#{crtdId}
+			) a
+			group by crtd_id,idx+no
+		) b
+		where #{searchDt} between from_dt and to_dt
 		union all
 		select 'hl' as  cssText
 			    ,'반휴' as gubun
@@ -53,11 +63,21 @@
 			   ,destination as info
 		from ks_business_trip where #{searchDt} between start_dt and end_dt
 		union all
-		select crtd_id as id
-				,'le' as cssText,'휴가' as gubun
-		       ,convert(varchar(10),le_dt,120) as term
-			   ,case when offcial ='Y' then '(공가) '+memo else memo end as info
-		from ks_leave where le_dt=#{searchDt}
+		select  crtd_id as id
+			  ,'le' as cssText,'휴가' as gubun
+			  ,convert(varchar(10),from_dt,120) +'~'+convert(varchar(10),to_dt,120) as term
+			  , memo as info
+		 from (
+			 select   crtd_id, MIN(le_dt) from_dt, MAX(le_dt) to_dt , COUNT(*) cnt, max(memo) as memo
+			 from (
+					select  crtd_id, le_dt,memo
+						,ROW_NUMBER() over ( PARTITION BY crtd_id order by  le_dt ) idx
+						,DATEDIFF( day, le_dt, getdate() )  no
+					from  ks_leave  where le_dt>=DATEADD(day, -10, #{searchDt})
+			) a
+			group by crtd_id,idx+no
+		) b
+		where #{searchDt} between from_dt and to_dt
 		union all
 		select crtd_id as id
 				,'hl' as  cssText
@@ -142,6 +162,7 @@
 		from ks_leave kl
 		where crtd_id=#{searchId}
 		and le_dt=#{searchDt}
+		and term>0
 		order by id desc
 	</select>
 
@@ -246,6 +267,415 @@
 			group by id,UserName
 			) e  on u.caps_id=e.id and u.caps_name=e.UserName
 		order by u.dept_cd,u.id
+	</select>
+
+	<select id="getCalendarList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.DashCalendar">
+	<if test="searchText == 'all' or searchText == 'bt'">
+	select '출장' as type
+		   ,'bt' as code
+		   , '출장' as title
+		   , 'true' as allDay
+		   ,destination as description
+	        ,convert(varchar(19),start_dt,20) as [start]
+	       ,convert(varchar(19),end_dt,20) as [end]
+		   ,(select caps_name from ks_user where id=bt.crtd_id) as caps_name
+		   ,crtd_id
+	from ks_business_trip bt
+	where (start_dt BETWEEN #{fromDate} and #{toDate} or end_dt BETWEEN #{fromDate} and #{toDate})
+		<choose>
+			<when test="searchDept != 'all'">
+				<choose>
+					<when test="searchUser == 'all'">
+					and crtd_id in (select id from ks_user where dept_cd=#{searchDept} and state_cd='001')
+					</when>
+					<otherwise>
+					and crtd_id = #{searchUser}
+					</otherwise>
+				</choose>
+			</when>
+			<otherwise>
+				<if test="searchUser != 'all'">
+					and crtd_id = #{searchUser}
+				</if>
+			</otherwise>
+		</choose>
+	</if>
+	<if test="searchText == 'all'">
+	union all
+	</if>
+	<if test="searchText == 'all' or searchText == 'le'">
+	select '휴가' as type
+			,'le' as code
+			,'휴가' as title
+			, 'true' as allDay
+		  , memo as description
+		  ,convert(varchar(19),from_dt,20) as [start]
+		  ,convert(varchar(19),to_dt,20) as [end]
+		  ,(select caps_name from ks_user where id=b.crtd_id) as caps_name
+		   ,b.crtd_id
+	 from (
+		 select   crtd_id, MIN(le_dt) from_dt, MAX(le_dt) to_dt , COUNT(*) cnt, max(memo) as memo
+		 from (
+				select  crtd_id, le_dt,memo
+					,ROW_NUMBER() over ( PARTITION BY crtd_id order by  le_dt ) idx
+					,DATEDIFF( day, le_dt, getdate() )  no
+				from  ks_leave  where le_dt between DATEADD(day, -10, #{fromDate}) and DATEADD(day, 10, #{toDate})
+		) a
+		group by crtd_id,idx+no
+	) b
+	where (from_dt BETWEEN #{fromDate} and #{toDate} or to_dt BETWEEN #{fromDate} and #{toDate})
+		<choose>
+			<when test="searchDept != 'all'">
+				<choose>
+					<when test="searchUser == 'all'">
+					and b.crtd_id in (select id from ks_user where dept_cd=#{searchDept} and state_cd='001')
+					</when>
+					<otherwise>
+					and b.crtd_id = #{searchUser}
+					</otherwise>
+				</choose>
+			</when>
+			<otherwise>
+				<if test="searchUser != 'all'">
+					and b,crtd_id = #{searchUser}
+				</if>
+			</otherwise>
+		</choose>
+	</if>
+	<if test="searchText == 'all'">
+	union all
+	</if>
+	<if test="searchText == 'all' or searchText == 'hl'">
+	select '반휴' as type
+			,'hl' as  code
+		    ,'반휴' as title
+		    , 'true' as allDay
+		    ,memo +case when offcial='Y' then '(공가)' else '' end as description
+		    ,convert(varchar(19),hl_dt,20) as [start]
+		   ,convert(varchar(19),hl_dt,20) as [end]
+		   ,(select caps_name from ks_user where id=hl.crtd_id) as caps_name
+		   ,crtd_id
+	from ks_half_leave hl where  hl_dt BETWEEN #{fromDate} and #{toDate}
+		<choose>
+			<when test="searchDept != 'all'">
+				<choose>
+					<when test="searchUser == 'all'">
+					and hl.crtd_id in (select id from ks_user where dept_cd=#{searchDept} and state_cd='001')
+					</when>
+					<otherwise>
+					and hl.crtd_id = #{searchUser}
+					</otherwise>
+				</choose>
+			</when>
+			<otherwise>
+				<if test="searchUser != 'all'">
+					and hl.crtd_id = #{searchUser}
+				</if>
+			</otherwise>
+		</choose>
+	</if>
+	<if test="searchText == 'all'">
+	union all
+	</if>
+	<if test="searchText == 'all' or searchText == 'wo'">
+	select '외근' as type
+		   ,'wo' as code
+		   , '외근' as title
+		   , 'false' as allDay
+		   ,destination + case when here_go_yn='Y' then '(현출)' else '' end + case when here_out_yn='Y' then '(현퇴)' else '' end as description
+		   ,convert(varchar(19),start_tm,20) as [start]
+		   ,convert(varchar(19),end_tm,20) as [end]
+		   ,(select caps_name from ks_user where id=wo.crtd_id) as caps_name
+		   ,crtd_id
+	from ks_workout	wo where out_dt BETWEEN #{fromDate} and #{toDate}
+		<choose>
+			<when test="searchDept != 'all'">
+				<choose>
+					<when test="searchUser == 'all'">
+					and wo.crtd_id in (select id from ks_user where dept_cd=#{searchDept} and state_cd='001')
+					</when>
+					<otherwise>
+					and wo.crtd_id = #{searchUser}
+					</otherwise>
+				</choose>
+			</when>
+			<otherwise>
+				<if test="searchUser != 'all'">
+					and wo.crtd_id = #{searchUser}
+				</if>
+			</otherwise>
+		</choose>
+	</if>
+	<if test="searchText == 'all'">
+	union all
+	</if>
+	<if test="searchText == 'all' or searchText == 're'">
+	select '빠지는날' as type
+			,'re' as  code
+			,'빠지는날' as title
+			, 'false' as allDay
+			,memo as description
+			,convert(varchar(19),repl_start_tm,20) as [start]
+		   ,convert(varchar(19),repl_end_tm,20) as [end]
+		   ,(select caps_name from ks_user where id=re.crtd_id) as caps_name
+		   ,crtd_id
+	from ks_replace re where repl_dt BETWEEN #{fromDate} and #{toDate}
+		<choose>
+			<when test="searchDept != 'all'">
+				<choose>
+					<when test="searchUser == 'all'">
+					and re.crtd_id in (select id from ks_user where dept_cd=#{searchDept} and state_cd='001')
+					</when>
+					<otherwise>
+					and re.crtd_id = #{searchUser}
+					</otherwise>
+				</choose>
+			</when>
+			<otherwise>
+				<if test="searchUser != 'all'">
+					and re.crtd_id = #{searchUser}
+				</if>
+			</otherwise>
+		</choose>
+	</if>
+	<if test="searchText == 'all'">
+	union all
+	</if>
+	<if test="searchText == 'all' or searchText == 'su'">
+	select '채우는날' as type
+			,'su' as  code
+			,'채우는날' as title
+			, 'true' as allDay
+		   ,memo as description
+		    ,convert(varchar(19),supple_dt,20) as [start]
+		   ,convert(varchar(19),supple_dt,20) as [end]
+		   ,(select caps_name from ks_user where id=su.crtd_id) as caps_name
+		   ,crtd_id
+	from ks_replace su where  supple_dt BETWEEN #{fromDate} and #{toDate}
+		<choose>
+			<when test="searchDept != 'all'">
+				<choose>
+					<when test="searchUser == 'all'">
+					and su.crtd_id in (select id from ks_user where dept_cd=#{searchDept} and state_cd='001')
+					</when>
+					<otherwise>
+					and su.crtd_id = #{searchUser}
+					</otherwise>
+				</choose>
+			</when>
+			<otherwise>
+				<if test="searchUser != 'all'">
+					and su.crtd_id = #{searchUser}
+				</if>
+			</otherwise>
+		</choose>
+	</if>
+
+	</select>
+
+	<select id="getPrivateList" parameterType="com.kspat.web.domain.SearchParam" resultType="com.kspat.web.domain.DashPrivate">
+	select type,code,destination, description, [start], [end] , u.caps_name,
+ 	(select  c.name from code_data c where u.dept_cd=c.code and c.group_key='DEPT') as dept_name, p.crtd_dt
+	from (
+	<if test="searchText == 'all' or searchText == 'bt'">
+		select '출장' as type
+				,'bt' as  code
+			   ,destination
+			   ,memo as description
+			   ,convert(varchar(19),start_dt,20) as [start]
+			   ,convert(varchar(19),end_dt,20) as [end]
+			   ,crtd_id
+			   ,crtd_dt
+			from ks_business_trip bt
+			where (start_dt BETWEEN #{fromDate} and #{toDate} or end_dt BETWEEN #{fromDate} and #{toDate})
+			<choose>
+				<when test="searchDept != 'all'">
+					<choose>
+						<when test="searchUser == 'all'">
+						and crtd_id in (select id from ks_user where dept_cd=#{searchDept} and state_cd='001')
+						</when>
+						<otherwise>
+						and crtd_id = #{searchUser}
+						</otherwise>
+					</choose>
+				</when>
+				<otherwise>
+					<if test="searchUser != 'all'">
+						and crtd_id = #{searchUser}
+					</if>
+				</otherwise>
+			</choose>
+		</if>
+		<if test="searchText == 'all'">
+		union all
+		</if>
+		<if test="searchText == 'all' or searchText == 'le'">
+			select '휴가' as type
+					,'le' as  code
+				  ,'' as destination
+				  , memo as description
+				  ,convert(varchar(19),from_dt,20) as [start]
+				  ,convert(varchar(19),to_dt,20) as [end]
+				  ,b.crtd_id
+				  ,b.crtd_dt
+			 from (
+				 select   crtd_id, MIN(le_dt) from_dt, MAX(le_dt) to_dt , COUNT(*) cnt, max(memo) as memo, max(crtd_dt) as crtd_dt
+				 from (
+						select  crtd_id, le_dt,memo,crtd_dt
+							,ROW_NUMBER() over ( PARTITION BY crtd_id order by  le_dt ) idx
+							,DATEDIFF( day, le_dt, getdate() )  no
+						from  ks_leave  where le_dt between DATEADD(day, -10, #{fromDate}) and DATEADD(day, 10, #{toDate})
+				) a
+				group by crtd_id,idx+no
+			) b
+			where (from_dt BETWEEN #{fromDate} and #{toDate} or to_dt BETWEEN #{fromDate} and #{toDate})
+			<choose>
+				<when test="searchDept != 'all'">
+					<choose>
+						<when test="searchUser == 'all'">
+						and b.crtd_id in (select id from ks_user where dept_cd=#{searchDept} and state_cd='001')
+						</when>
+						<otherwise>
+						and b.crtd_id = #{searchUser}
+						</otherwise>
+					</choose>
+				</when>
+				<otherwise>
+					<if test="searchUser != 'all'">
+						and b.crtd_id = #{searchUser}
+					</if>
+				</otherwise>
+			</choose>
+
+		</if>
+		<if test="searchText == 'all'">
+		union all
+		</if>
+		<if test="searchText == 'all' or searchText == 'hl'">
+			select '반휴' as type
+					,'hl' as  code
+				,'' as destination
+				,memo +case when offcial='Y' then '(공가)' else '' end as description
+				,convert(varchar(19),hl_dt,20) as [start]
+				,convert(varchar(19),hl_dt,20) as [end]
+				,crtd_id
+			   	,crtd_dt
+			 from ks_half_leave hl where  hl_dt BETWEEN #{fromDate} and #{toDate}
+			<choose>
+				<when test="searchDept != 'all'">
+					<choose>
+						<when test="searchUser == 'all'">
+						and hl.crtd_id in (select id from ks_user where dept_cd=#{searchDept} and state_cd='001')
+						</when>
+						<otherwise>
+						and hl.crtd_id = #{searchUser}
+						</otherwise>
+					</choose>
+				</when>
+				<otherwise>
+					<if test="searchUser != 'all'">
+						and hl.crtd_id = #{searchUser}
+					</if>
+				</otherwise>
+			</choose>
+		</if>
+		<if test="searchText == 'all'">
+		union all
+		</if>
+		<if test="searchText == 'all' or searchText == 'wo'">
+			select '외근' as type
+					,'wo' as  code
+			       ,destination + case when here_go_yn='Y' then '(현출)' else '' end + case when here_out_yn='Y' then '(현퇴)' else '' end as destination
+			       ,memo as description
+				   ,convert(varchar(16),start_tm,20) as [start]
+				   ,convert(varchar(16),end_tm,20) as [end]
+				   ,crtd_id
+				   ,crtd_dt
+			from ks_workout	wo where out_dt BETWEEN #{fromDate} and #{toDate}
+			<choose>
+				<when test="searchDept != 'all'">
+					<choose>
+						<when test="searchUser == 'all'">
+						and wo.crtd_id in (select id from ks_user where dept_cd=#{searchDept} and state_cd='001')
+						</when>
+						<otherwise>
+						and wo.crtd_id = #{searchUser}
+						</otherwise>
+					</choose>
+				</when>
+				<otherwise>
+					<if test="searchUser != 'all'">
+						and wo.crtd_id = #{searchUser}
+					</if>
+				</otherwise>
+			</choose>
+		</if>
+		<if test="searchText == 'all'">
+		union all
+		</if>
+		<if test="searchText == 'all' or searchText == 're'">
+			select '대체(빠지는날)' as type
+					,'re' as  code
+					,'' as destination
+					,memo as description
+					,convert(varchar(16),repl_start_tm,20) as [start]
+				   ,convert(varchar(16),repl_end_tm,20) as [end]
+				   ,crtd_id
+				   ,crtd_dt
+			from ks_replace re where repl_dt BETWEEN #{fromDate} and #{toDate}
+			<choose>
+				<when test="searchDept != 'all'">
+					<choose>
+						<when test="searchUser == 'all'">
+						and re.crtd_id in (select id from ks_user where dept_cd=#{searchDept} and state_cd='001')
+						</when>
+						<otherwise>
+						and re.crtd_id = #{searchUser}
+						</otherwise>
+					</choose>
+				</when>
+				<otherwise>
+					<if test="searchUser != 'all'">
+						and re.crtd_id = #{searchUser}
+					</if>
+				</otherwise>
+			</choose>
+		</if>
+		<if test="searchText == 'all'">
+		union all
+		</if>
+		<if test="searchText == 'all' or searchText == 'su'">
+			select '대체(채우는날)' as type
+					,'su' as  code
+					,'' as destination
+				   ,memo as description
+				    ,convert(varchar(19),supple_dt,20) as [start]
+				   ,convert(varchar(19),supple_dt,20) as [end]
+				   ,crtd_id
+				   ,crtd_dt
+			from ks_replace su where repl_dt BETWEEN #{fromDate} and #{toDate}
+			<choose>
+				<when test="searchDept != 'all'">
+					<choose>
+						<when test="searchUser == 'all'">
+						and su.crtd_id in (select id from ks_user where dept_cd=#{searchDept} and state_cd='001')
+						</when>
+						<otherwise>
+						and su.crtd_id = #{searchUser}
+						</otherwise>
+					</choose>
+				</when>
+				<otherwise>
+					<if test="searchUser != 'all'">
+						and su.crtd_id = #{searchUser}
+					</if>
+				</otherwise>
+			</choose>
+		</if>
+	) p left outer join ks_user u on p.crtd_id=u.id
+
+
+
 	</select>
 
 

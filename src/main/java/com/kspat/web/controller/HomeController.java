@@ -1,12 +1,8 @@
 package com.kspat.web.controller;
 
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -23,7 +19,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.kspat.util.common.SessionUtil;
-import com.kspat.web.domain.Documents;
 import com.kspat.web.domain.Pwd;
 import com.kspat.web.domain.SessionInfo;
 import com.kspat.web.domain.User;
@@ -47,7 +42,7 @@ public class HomeController {
 	@RequestMapping(value = "/index")
 	public String index( Model model, HttpServletRequest request, HttpServletResponse response) throws SQLException {
     	SessionInfo info =SessionUtil.getSessionInfo(request);
-    	System.out.println("index info:"+info);
+    	//System.out.println("index info:"+info);
     	if(info == null){
     		return "redirect:/login";
     	}else{

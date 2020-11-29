@@ -20,6 +20,7 @@
 		<if test="searchDept != 'all'">
 			and dept_cd=#{searchDept}
 		</if>
+		order by dept_cd
 	</select>
 
 	<!--
@@ -294,4 +295,8 @@
 	delete from ks_daily_stat where id=#{id} and st_dt <![CDATA[>=]]> #{stateApplyDt}
 
 	</delete>
+	
+	<select id="getDeptList" resultType="com.kspat.web.domain.CodeData">
+	select  * from code_data where group_key='DEPT' and code=#{value}
+	</select>
 </mapper>

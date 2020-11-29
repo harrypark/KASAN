@@ -5,7 +5,7 @@
 <!-- title start -->
 <div class="row wrapper border-bottom white-bg">
     <div class="col-lg-9">
-        <h2></h2>
+        <h2>휴가/반휴</h2>
     </div>
 </div>
 <!-- title end -->
@@ -30,6 +30,19 @@
 					    <input type="text" class="form-control trap" id="toDate" name="toDate" readonly="readonly">
 					</div>
                 </div>
+                <div class="col-lg-2 col-md-6 col-sm-12">
+                	 <select class="form-control chosen" id="searchDept" name="searchDept">
+                        <option value="all">부서_전체</option>
+                        <c:forEach items="${deptList}" var="list">
+                        	<option value="${list.code }">${list.name }</option>
+                        </c:forEach>
+                    </select>
+                </div>
+                <div class="col-lg-2 col-md-6 col-sm-12">
+                    <select class="form-control chosen" id="searchUser" name="searchUser">
+                        <option value="all">전체</option>
+                    </select>
+                </div>
                 <div class="col-lg-3 col-md-6 col-sm-6">
                 	<button class="btn btn-w-m btn-primary m-r-sm" data-toggle="modal" data-backdrop="static" type="button"  data-target="#modal_leave" data-backdrop="static" id="btn1" style="display: none;"> Add </button>
                 	<button class="btn btn-w-m btn-primary m-r-sm" data-toggle="modal" data-backdrop="static" type="button"  data-target="#modal_halfLeave" data-backdrop="static" id="btn2" style="display: none;"> Add </button>
@@ -53,6 +66,7 @@
 					                    <thead>
 					                    <tr>
 					                        <th>ID</th>
+					                        <th>등록자ID</th>
 					                        <th>신청일</th>
 					                        <th>기간(일)</th>
 					                        <th>공가</th>
@@ -76,6 +90,7 @@
 					                    <thead>
 					                    <tr>
 					                        <th>ID</th>
+					                        <th>등록자ID</th>
 					                        <th>신청일</th>
 					                        <th>기간(일)</th>
 					                        <th>공가</th>
@@ -156,11 +171,14 @@
 
 	            <h4 class="modal-title">반휴</h4>
 	            <p style="font-weight: 300; margin-bottom: 10px;"><i class="fa fa-check-circle-o text-danger"></i> 필수 입력 항목입니다.</p>
-	            <p style="font-weight: 600; margin-bottom: 5px;" class="text-info"><i class="fa fa-check-circle-o text-info"></i> 반휴 신청시 출근시간은 15:00 이전 입니다.</p>
+	            <p style="font-weight: 600; margin-bottom: 5px;" class="text-info"><i class="fa fa-check-circle-o text-info"></i> 반휴 신청시 출근시간은 15:00 이전이며,<br/> 메모란에 근무예정시간을 반드시 기재하시기 바랍니다.</p>
 	            <p style="font-weight: 500; margin-bottom: 0px;" class="text-info">대상기간: ${score.startDt} ~ ${score.endDt}</p>
 	        </div>
 	        <form class="form-horizontal" name="halfLeaveForm" id="halfLeaveForm" >
 	        <div class="modal-body">
+	        	<div class="form-group rep-info re-info"><label class="col-sm-3 control-label"></label>
+	                <div class="col-sm-9"><label class="text-danger"> <span id="hlDtInfo"></span> 에는 대체근무가 신청되어 있습니다. <br/>다른날을 선택하세요.</label></div>
+	            </div>
 	        	<div class="form-group"><label class="col-sm-3 control-label">신청일<i class="fa fa-check-circle-o text-danger"></i></label>
 	                <div class="col-sm-9"><input type="text" name="hlDt" id="hlDt" class="form-control hl" readonly="readonly"></div>
 	            </div>
@@ -174,7 +192,7 @@
 	                <div class="col-sm-9"><input type="radio" name="offcial" class="hl" value="Y">예 &nbsp;&nbsp;<input type="radio" name="offcial" class="leave" value="N" checked="checked">아니오</div>
 	            </div>
 	            <div class="form-group"><label class="col-sm-3 control-label">메모 </label>
-	                <div class="col-sm-9"><textarea id="memo" name="memo" class="form-control hl"></textarea></div>
+	                <div class="col-sm-9"><textarea id="memo" name="memo" class="form-control hl" placeholder="근무예정시간을 기재하세요. ex) 12:00 ~ 14:00"></textarea></div>
 	            </div>
 
 	         </div>
@@ -298,10 +316,14 @@ var annualMinusUseYn = '${annualMinusUseYn}';
 
 
    function checkAvailableAnnual(type){
+	   var searchDt=null;
+	   if(type == 'hl'){
+		   searchDt=$('#hlDt').val();
+	   }
 	   $.ajax({
 			url : "<c:url value='/app/checkAvailableAnnualAjax'/>",
 			type : 'POST',
-			//data : {searchDt:searchDt},
+			data : {searchDt:searchDt},
 			dataType : 'json',
 			success : function(data){
 				if(data.result == 'fail'){
@@ -318,6 +340,16 @@ var annualMinusUseYn = '${annualMinusUseYn}';
 						$('#modal_leave #curr').val(data.currCount);
 					}else{
 						$('#modal_halfLeave #curr').val(data.currCount);
+
+						if(data.hasRe == 'yes'){
+							$('.re-info').show();
+							$('#hlDtInfo').text(searchDt);
+							$('#btnhalfLeaveAdd').addClass('disabled');
+						}else{
+							$('.re-info').hide();
+							$('#hlDtInfo').text('');
+							$('#btnhalfLeaveAdd').removeClass('disabled');
+						}
 					}
 				}
 			}
@@ -375,8 +407,10 @@ var annualMinusUseYn = '${annualMinusUseYn}';
 		 clickRowleave = leave_table.fnGetPosition(this);
 		if( clickRowleave != null){
 			var rowData = leave_table.fnGetData(this); // 선택한 데이터 가져오기
+			if(rowData[1] != '${info.id}') return; //자신의 Id가 이니면 Exit
+
 			//console.log(rowData[0]);
-			if(deletePossibleCheck(rowData[1])){
+			if(deletePossibleCheck(rowData[2])){
    				$("#btnLeaveDelete").show();
    			}
 			$('#leaveForm .leave').attr("disabled",true);
@@ -427,8 +461,8 @@ var annualMinusUseYn = '${annualMinusUseYn}';
 			        },
 					success: function(data){
 						if(data==1){
-	  					leave_table.fnDeleteRow(clickRowleave);
-	  					leaveFormReset();
+		  					getleave();
+		  					leaveFormReset();
 						}else{
 							alert("삭제 오류 발생.");
 						}
@@ -488,7 +522,13 @@ var annualMinusUseYn = '${annualMinusUseYn}';
 		rules: {
 			hlDt: { required: true },
 			offcial: {  required: true },
+			memo: {  required: true }
+	  },messages: {
+		  hlDt: { required: "신청일을 선택하세요." },
+		  offcial: {  required: "공가여부를 체크하세요." },
+		  memo: {  required: "근무예정시간을 기재하세요. ex) 12:00 ~ 14:00" }
 	  }
+
 	});
 
 
@@ -496,8 +536,9 @@ var annualMinusUseYn = '${annualMinusUseYn}';
 		 clickRowhalfLeave = halfLeave_table.fnGetPosition(this);
 		if( clickRowhalfLeave != null){
 			var rowData = halfLeave_table.fnGetData(this); // 선택한 데이터 가져오기
+			if(rowData[1] != '${info.id}') return; //자신의 Id가 이니면 Exit
 			//console.log(rowData[0]);
-			if(deletePossibleCheck(rowData[1])){
+			if(deletePossibleCheck(rowData[2])){
    				$("#btnhalfLeaveDelete").show();
    			}
 			$('#halfLeaveForm .hl').attr("disabled",true);
@@ -543,7 +584,8 @@ var annualMinusUseYn = '${annualMinusUseYn}';
 			        },
 					success: function(data){
 						if(data==1){
-						halfLeave_table.fnDeleteRow(clickRowhalfLeave);
+						//halfLeave_table.fnDeleteRow(clickRowhalfLeave);
+						gethalfLeave();
 						halfLeaveFormReset();
 						}else{
 							alert("삭제 오류 발생.");
@@ -630,8 +672,9 @@ var annualMinusUseYn = '${annualMinusUseYn}';
 				}
 				*/
 
-				fnClickAddRowhalfLeave(data);
-				halfLeave_table.fnDraw();
+// 				fnClickAddRowhalfLeave(data);
+// 				halfLeave_table.fnDraw();
+				gethalfLeave();
 				halfLeaveFormReset();
 			}
 		});
@@ -648,10 +691,11 @@ var annualMinusUseYn = '${annualMinusUseYn}';
 	        complete: function () {
 	        },
 			success: function(data){
-				for( var i=0; i<data.length; i++){
-					fnClickAddRowleave(data[i]);
-				}
-				leave_table.fnDraw();
+// 				for( var i=0; i<data.length; i++){
+// 					fnClickAddRowleave(data[i]);
+// 				}
+// 				leave_table.fnDraw();
+				getleave();
 				leaveFormReset();
 				}
 			});
@@ -663,7 +707,7 @@ var annualMinusUseYn = '${annualMinusUseYn}';
 
 	function fnClickAddRowleave(data){
 		leave_table.fnAddData( [
-					data.id,data.leDt,  data.term, data.offcial, data.crtdId, data.crtdDt,data.mdfyId, data.mdfyDt
+					data.id,data.crtdId,data.leDt,  data.term, data.offcial, data.crtdNm, data.crtdDt,data.mdfyId, data.mdfyDt
 				], false);
 	}
 
@@ -701,6 +745,25 @@ var annualMinusUseYn = '${annualMinusUseYn}';
 		$('#modal_leave').modal('hide');
 	}
 
+	 function searchDeptUser(type){
+	   	$.ajax({
+				url : "<c:url value='/management/getDeptUserAjax'/>",
+				data : {searchDept : $('#searchDept').val()},
+				type : 'POST',
+				dataType : 'json',
+				success : function(data){
+					$('#searchUser option').remove();
+					$('#searchUser').append('<option value="all">전체</option>');
+					for(var i=0; i<data.length;i++){
+						$('#searchUser').append('<option value="'+data[i].id+'">'+data[i].capsName+'('+data[i].deptName+')</option>');
+					}
+
+					if(type == 'deptChange'){
+						getList();
+					}
+				}
+			});
+	   }
 
 
  </script>

@@ -36,8 +36,11 @@ public class EmailServiceImpl implements EmailService{
 	@Value("#{sendMailInfo.address}")
     private String senderEmailAddress;
 
+	@Value("#{sendMailInfo.operate}") //운영중 true -> mail발송
+	private Boolean operate;
+
 	@Async
-	public void sendMail(Map<String, String> params, String subject, String template, String email) {
+	public void sendMail(String template, Map<String, String> params, String subject,  String email) {
 		MimeMessage msg = mailSender.createMimeMessage();
 		try {
 		    MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
@@ -45,12 +48,15 @@ public class EmailServiceImpl implements EmailService{
 		    helper.setTo(email);
 		    helper.setFrom(senderEmailAddress);
 		    String mailText = templateBuilder.merge(template, params);
-		    logger.debug("==========================================================================");
-		    logger.debug(mailText);
-		    logger.debug("==========================================================================");
+//		    logger.debug("==========================================================================");
+//		    logger.debug(mailText);
+//		    logger.debug("==========================================================================");
 
 		    helper.setText(mailText, true);
-		    //mailSender.send(msg);
+
+		    if(operate) {
+		    	mailSender.send(msg);
+		    }
 		} catch (MessagingException e) {
 		    e.printStackTrace();
 		    logger.info("error occurred during send email @@@@Message : "+ e);
@@ -71,7 +77,11 @@ public class EmailServiceImpl implements EmailService{
 		    //logger.debug("==========================================================================");
 
 		    helper.setText(mailText, true);
-		    mailSender.send(msg);
+		    if(operate) {
+		    	mailSender.send(msg);
+		    }
+
+
 		} catch (MessagingException e) {
 		    e.printStackTrace();
 		    logger.info("error occurred during send email @@@@Message : "+ e);
